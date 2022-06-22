@@ -80,7 +80,7 @@ class sem_model():
         lp_lam_psi = to_add['lam'] * (Normal(self.hyper['lam_mean'], torch.sqrt(self.hyper['lam_sig2'] * theta_sample['psi'][1:])).log_prob(theta_sample['lam'][1:]).sum())
 
         lp_eta_sig2 = to_add['eta'] * (Normal(0, torch.sqrt(theta_sample['sig2'])).log_prob(theta_sample['eta']).sum())
-
+        
         return lp_sig2 + lp_psi + lp_nu + lp_lam_psi + lp_eta_sig2
 
     def neg_entropy(self, theta_sample):
