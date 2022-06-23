@@ -158,7 +158,8 @@ params = {'nu': nu, \
           'eta': eta, 'psi': psi, \
           'lam': lam, 'sig2': sig2}
 
-degenerates = {'psi': params['psi'], 'sig2': params['sig2']}
+degenerates = {'psi': params['psi'], 'sig2': params['sig2'], 'eta': params['eta']}
+
 #####################################
 #Data Generating Process
 #Generate y_data based on likelihood function
@@ -183,13 +184,13 @@ y_data = like_dist.sample()
 sem_model = sem_model(y_data = y_data, degenerates = degenerates, hyper=hyper)
 
 #Set Optimisation Parameters
-lr, max_iter = 0.01, 10000
+lr, max_iter = 0.01, 5000
 optimizer = torch.optim.Adam([sem_model.var_parameters[key].phi for key in sem_model.var_parameters], lr=lr)
 iters = trange(max_iter, mininterval = 1)
 
 #Optimisation Record Keeping
 
-writer = SummaryWriter("semjune18_19")
+writer = SummaryWriter("semjune18_20")
 
 #Optimise
 
@@ -217,18 +218,18 @@ for t in iters:
                         'psi_3': sem_model.var_parameters['psi'].phi[2].item(),\
                     'sig2': sem_model.var_parameters['sig2'].phi[0].item(),\
                     }, global_step = t)
-    writer.add_scalars("eta", \
-                       {'eta1_mean': sem_model.var_parameters['eta'].phi[0][0].exp().item(),\
-                        'eta1_sig': sem_model.var_parameters['eta'].phi[1][0].exp().item(),\
-                        'eta1_true': params['eta'][0].item(),\
-                        'eta100_mean': sem_model.var_parameters['eta'].phi[0][99].exp().item(),\
-                        'eta100_sig': sem_model.var_parameters['eta'].phi[1][99].exp().item(),\
-                        'eta1_true': params['eta'][99].item(),\
-                        'eta500_mean': sem_model.var_parameters['eta'].phi[0][500].exp().item(),\
-                        'eta500_sig': sem_model.var_parameters['eta'].phi[1][500].exp().item(),\
-                        'eta500_true': params['eta'][500].item(),\
-                        'eta750_mean': sem_model.var_parameters['eta'].phi[0][750].exp().item(),\
-                        'eta750_sig': sem_model.var_parameters['eta'].phi[1][750].exp().item(),\
-                        'eta750_true': params['eta'][750].item(),\
-                        }, global_step = t)
+    # writer.add_scalars("eta", \
+    #                    {'eta1_mean': sem_model.var_parameters['eta'].phi[0][0].exp().item(),\
+    #                     'eta1_sig': sem_model.var_parameters['eta'].phi[1][0].exp().item(),\
+    #                     'eta1_true': params['eta'][0].item(),\
+    #                     'eta100_mean': sem_model.var_parameters['eta'].phi[0][99].exp().item(),\
+    #                     'eta100_sig': sem_model.var_parameters['eta'].phi[1][99].exp().item(),\
+    #                     'eta1_true': params['eta'][99].item(),\
+    #                     'eta500_mean': sem_model.var_parameters['eta'].phi[0][500].exp().item(),\
+    #                     'eta500_sig': sem_model.var_parameters['eta'].phi[1][500].exp().item(),\
+    #                     'eta500_true': params['eta'][500].item(),\
+    #                     'eta750_mean': sem_model.var_parameters['eta'].phi[0][750].exp().item(),\
+    #                     'eta750_sig': sem_model.var_parameters['eta'].phi[1][750].exp().item(),\
+    #                     'eta750_true': params['eta'][750].item(),\
+    #                     }, global_step = t)
 

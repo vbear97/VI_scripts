@@ -160,14 +160,11 @@ class sem_model():
         qvar_prob = {var: self.qvar[var].log_prob(sample) for (var,sample) in theta_sample.items()}
 
         return sum(qvar_prob.values())
-    
-# %%
-#elbo function 
 
-def elbo(sem_model):
-    theta_sample = sem_model.generate_theta_sample()
+    def elbo(self):
+        theta_sample = self.generate_theta_sample()
 
-    return sem_model.log_like(theta_sample) + sem_model.log_prior(theta_sample) - sem_model.entropy(theta_sample)
+        return self.log_like(theta_sample) + self.log_prior(theta_sample) - self.entropy(theta_sample)
 
 # %%
 #Instantiate SEM model
@@ -176,13 +173,12 @@ sem_model = sem_model(y_data = y_data, \
 # %%
 #Instantiate Optimizer Object
 optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_model.qvar], lr = lr)
-iters = trange(max_iter, mininterval = 1)
 
 # %%
 #Optimise
 for t in range(max_iter):
     optimizer.zero_grad()
-    loss = -elbo(sem_model) 
+    loss = -sem_model.elbo()
     loss.backward()
     optimizer.step()
     writer.add_scalar(tag = "training_loss: step_size="+str(lr), scalar_value=\
