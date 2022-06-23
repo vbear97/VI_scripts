@@ -208,7 +208,16 @@ optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_mode
 iters = trange(max_iter, mininterval = 1)
 
 # %%
-#Hardcode values to record for every parameter  
+#What results do we want to visualise?
+
+#only create for non-degenerate distributions 
+#1. #{'nu': [nu_mean, nu_sig], 'lam': [lam_mean, lam_sig], 'eta': ['eta_mean, eta_sigma']}
+#2. expand list items out into scalar dicts  
+#3. plot/visualise in an appropriate way 
+#4. How to add maximum functionality?
+
+# %%
+#Hardcode values to record for every parameter. This is clean but really annoying to have to do for every single one  
 #nu 
 nu_mean = {'nu_'+ str(j+1) + 'mean': sem_model.qvar['nu'].var_params[0][j].item() for j in range(sem_model.qvar['nu'].size)}
 nu_sig = {'nu_'+ str(j+1) + 'sig': sem_model.qvar['nu'].var_params[1][j].exp().item() for j in range(sem_model.qvar['nu'].size)}
@@ -222,17 +231,6 @@ lam_sig = {'lam_'+ str(j+2) + 'sig': sem_model.qvar['lam'].var_params[1][j].exp(
 eta_mean = {'eta_'+ str(j+1) + 'mean': sem_model.qvar['eta'].var_params[0][j].item() for j in range(sem_model.qvar['eta'].size)}
 
 eta_sig = {'eta_'+ str(j+1) + 'sig': sem_model.qvar['eta'].var_params[1][j].exp().item() for j in range(sem_model.qvar['eta'].size)}
-
-#psi 
-psi_shape = {'psi_'+ str(j+1) + 'shape': sem_model.qvar['psi'].var_params[0][j].exp().item() for j in range(M)}
-
-psi_rate = {'psi_'+ str(j+1) + 'rate': sem_model.qvar['psi'].var_params[1][j].exp().item() for j in range(M)}
-
-#sig2
-sig2_shape = {'sig2_'+ str(j+1) + 'shape': sem_model.qvar['sig2'].var_params[0][j].exp().item() for j in range(M)}
-
-sig2_rate = {'sig2_'+ str(j+1) + 'rate': sem_model.qvar['sig2'].var_params[1][j].exp().item() for j in range(M)}
-
 # %%
-#Incorporate degenerate info 
-
+#This aggregation of information is a gargantuan task in itself.
+#Spend half a day finding better ways to visualise information using tensorboard.
