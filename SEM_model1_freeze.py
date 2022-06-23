@@ -190,7 +190,7 @@ iters = trange(max_iter, mininterval = 1)
 
 #Optimisation Record Keeping
 
-writer = SummaryWriter("semjune18_20")
+writer = SummaryWriter("sem_20")
 
 #Optimise
 
@@ -232,4 +232,3 @@ for t in iters:
     #                     'eta750_sig': sem_model.var_parameters['eta'].phi[1][750].exp().item(),\
     #                     'eta750_true': params['eta'][750].item(),\
     #                     }, global_step = t)
-
