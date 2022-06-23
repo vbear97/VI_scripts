@@ -80,8 +80,10 @@ class qvar_normal():
         if log_s is None:
             log_s = torch.randn(size)  # log of the standard deviation
         # Variational parameters
-        self.var_params = torch.stack([mu, log_s])
+        self.var_params = torch.stack([mu, log_s]) #are always unconstrained
         self.var_params.requires_grad = True
+        self.var_params.transforms = #hold the transforms 
+
         self.size = size
     def dist(self):
         return torch.distributions.Normal(self.phi[0], self.phi[1].exp())
@@ -94,6 +96,8 @@ class qvar_degenerate():
     def __init__(self, values):
         self.var_params = values
         self.var_params.requires_grad = False #do not update this parameter
+        self.var_params.transforms = #hold the transforms 
+
     def dist(self):
         return "Degenerate, see values attribute"
     def rsample(self):
@@ -104,6 +108,8 @@ class qvar_degenerate():
 class qvar_invgamma(): #dummy class
     def __init__(self):
         self.var_params = None
+        self.var_params.transforms = None 
+        self.var_params.requires_grad = True
         return #do nothing
     def log_prob(self, x):
         return torch.tensor([0.0])
@@ -181,7 +187,6 @@ class sem_model():
         'lam': Normal(loc = self.hyper['lam_mean'], \
             scale = torch.sqrt(self.hyper['lam_sig2']*(theta_sample['psi'][1:])))
             }
-
         log_priors = {var: priors[var].log_prob(theta_sample[var]).sum() for var in priors if var not in self.degenerate}
 
         return sum(log_priors.values())
@@ -208,29 +213,18 @@ optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_mode
 iters = trange(max_iter, mininterval = 1)
 
 # %%
-#What results do we want to visualise?
+#Create function to visualise results 
+def vis_results(sem_model, var, threshold):
+    
 
-#only create for non-degenerate distributions 
-#1. #{'nu': [nu_mean, nu_sig], 'lam': [lam_mean, lam_sig], 'eta': ['eta_mean, eta_sigma']}
-#2. expand list items out into scalar dicts  
-#3. plot/visualise in an appropriate way 
-#4. How to add maximum functionality?
+    return
+
+results_vis = {var: vis_results(sem_model,var, threshold = 10) for var in sem_model.qvar}
 
 # %%
-#Hardcode values to record for every parameter. This is clean but really annoying to have to do for every single one  
+#Create dict to visualise results 
+
+# %%
 #nu 
 nu_mean = {'nu_'+ str(j+1) + 'mean': sem_model.qvar['nu'].var_params[0][j].item() for j in range(sem_model.qvar['nu'].size)}
 nu_sig = {'nu_'+ str(j+1) + 'sig': sem_model.qvar['nu'].var_params[1][j].exp().item() for j in range(sem_model.qvar['nu'].size)}
-
-#lam 
-lam_mean = {'lam_'+ str(j+2) + 'mean': sem_model.qvar['lam'].var_params[0][j].item() for j in range(sem_model.qvar['lam'].size)}
-
-lam_sig = {'lam_'+ str(j+2) + 'sig': sem_model.qvar['lam'].var_params[1][j].exp().item() for j in range(sem_model.qvar['lam'].size)}
-
-#eta 
-eta_mean = {'eta_'+ str(j+1) + 'mean': sem_model.qvar['eta'].var_params[0][j].item() for j in range(sem_model.qvar['eta'].size)}
-
-eta_sig = {'eta_'+ str(j+1) + 'sig': sem_model.qvar['eta'].var_params[1][j].exp().item() for j in range(sem_model.qvar['eta'].size)}
-# %%
-#This aggregation of information is a gargantuan task in itself.
-#Spend half a day finding better ways to visualise information using tensorboard.
