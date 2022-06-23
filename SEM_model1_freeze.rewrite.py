@@ -3,16 +3,17 @@
 from re import S
 from turtle import update
 from sklearn.cluster import k_means
+
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
 from torch.utils.tensorboard import SummaryWriter
-import matplotlib.pyplot as plt
-import numpy as np
-from tqdm import trange
-import math
-import pandas as pd
-import numpy as np
+# import matplotlib.pyplot as plt
+# import numpy as np
+# from tqdm import trange
+# import math
+# import pandas as pd
+# import numpy as np
 
 # %% 
 #User to change: 
@@ -40,23 +41,21 @@ N = 1000
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig2 = torch.tensor([1.2 * 1.2])
-lam = torch.tensor([0.8, 0.5])
+lam = torch.tensor([0.9, 0.6])
 psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
 psi = torch.square(psi_sqrt)
-
-degenerate = {'psi': psi, 'sig2': sig2}
-
-#Set Optim Params
-lr, max_iter = 0.01, 10000
-writer = SummaryWriter()
-
-# %% 
-# Generate True Values for Parameters based on User Input
 
 #Generate Latent Variables
 eta = torch.rand(N)*torch.sqrt(sig2)
 lam_1_fixed = torch.tensor([1.0])
 lam = torch.cat((lam_1_fixed, lam))
+
+#Set Optim Params
+lr, max_iter = 0.01, 5000
+writer = SummaryWriter("sem_model1_23June_03")
+
+#Fix degenerates
+degenerate = {'psi': psi, 'sig2': sig2, 'eta': eta}
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
@@ -82,11 +81,8 @@ class qvar_normal():
         # Variational parameters
         self.var_params = torch.stack([mu, log_s]) #are always unconstrained
         self.var_params.requires_grad = True
-        self.var_params.transforms = #hold the transforms 
-
-        self.size = size
     def dist(self):
-        return torch.distributions.Normal(self.phi[0], self.phi[1].exp())
+        return torch.distributions.Normal(self.var_params[0], self.var_params[1].exp())
     def rsample(self, n=torch.Size([])):
         return self.dist().rsample(n)
     def log_prob(self, x):
@@ -96,8 +92,6 @@ class qvar_degenerate():
     def __init__(self, values):
         self.var_params = values
         self.var_params.requires_grad = False #do not update this parameter
-        self.var_params.transforms = #hold the transforms 
-
     def dist(self):
         return "Degenerate, see values attribute"
     def rsample(self):
@@ -107,9 +101,7 @@ class qvar_degenerate():
 
 class qvar_invgamma(): #dummy class
     def __init__(self):
-        self.var_params = None
-        self.var_params.transforms = None 
-        self.var_params.requires_grad = True
+        self.var_params = None 
         return #do nothing
     def log_prob(self, x):
         return torch.tensor([0.0])
@@ -122,31 +114,6 @@ class InvGamma(): #dummy class
     def log_prob(self, x):
         return torch.tensor([0.0])
 
-#%% [markdown]
-#Next, create the 'sem_model' class.
-#Rationale is to have all information about the model contained in this class. 
-
-#Inputs, as torch tensors: 
-
-# y_data (n*m) dataset
-#degenerates: strings from lam, nu,psi, eta, sig2: key: float tensor values 
-#hyper: dictionary with string keys for prior distribution parameters
-
-#attributes: 
-
-#y_data, n, m, degenerates, hyper, var_parameters
-
-#functions
-
-#generate_theta_sample(self):
-#out: dictionary of var_parameter: torch.tensor with correct dimensions, either [n] or [m]
-#log_like(self, theta_sample):
-#out: log_likelihood (torch.tensor)
-
-#log_prior(self, theta_sample):
-#out: log_prior(torch.tensor)
-
-#neg_entropy(self, theta_sample)
 # %%
 class sem_model():
     def __init__(self, y_data, degenerate, hyper):
@@ -154,7 +121,7 @@ class sem_model():
         self.y_data = y_data
         self.degenerate = {var: qvar_degenerate(value) for (var,value) in degenerate.items()}
         self.hyper = hyper
-        self.n = y_data.size(0)
+        self.n = y_data.size(0) 
         self.m = y_data.size(1)
         self.lam1 = torch.tensor([1.0])
         
@@ -167,15 +134,13 @@ class sem_model():
         self.qvar.update(self.degenerate)
 
     def generate_theta_sample(self):
-        theta_sample = {var: qvar.rsample() for (var,qvar) in self.qvar.items()}
-        return theta_sample
+        return {var: qvar.rsample() for (var,qvar) in self.qvar.items()}
 
     def log_like(self,theta_sample):
         like_dist_cov = torch.diag(theta_sample['psi'])
         lam_full = torch.cat((self.lam1, theta_sample['lam']))
         like_dist_means = torch.matmul(theta_sample['eta'].unsqueeze(1), lam_full.unsqueeze(0))
-        log_like = mvn(like_dist_means, covariance =like_dist_cov).log_prob(self.y_data).sum()
-
+        log_like = mvn(like_dist_means, covariance_matrix= like_dist_cov).log_prob(self.y_data).sum()
         return log_like
 
     def log_prior(self, theta_sample): 
@@ -195,6 +160,7 @@ class sem_model():
         qvar_prob = {var: self.qvar[var].log_prob(sample) for (var,sample) in theta_sample.items()}
 
         return sum(qvar_prob.values())
+    
 # %%
 #elbo function 
 
@@ -213,18 +179,42 @@ optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_mode
 iters = trange(max_iter, mininterval = 1)
 
 # %%
-#Create function to visualise results 
-def vis_results(sem_model, var, threshold):
-    
+#Optimise
+for t in range(max_iter):
+    optimizer.zero_grad()
+    loss = -elbo(sem_model) 
+    loss.backward()
+    optimizer.step()
+    writer.add_scalar(tag = "training_loss: step_size="+str(lr), scalar_value=\
+                      loss.item(), global_step = t)
 
-    return
-
-results_vis = {var: vis_results(sem_model,var, threshold = 10) for var in sem_model.qvar}
-
-# %%
-#Create dict to visualise results 
-
-# %%
-#nu 
-nu_mean = {'nu_'+ str(j+1) + 'mean': sem_model.qvar['nu'].var_params[0][j].item() for j in range(sem_model.qvar['nu'].size)}
-nu_sig = {'nu_'+ str(j+1) + 'sig': sem_model.qvar['nu'].var_params[1][j].exp().item() for j in range(sem_model.qvar['nu'].size)}
+    writer.add_scalars("vp",\
+                       {'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
+                        'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
+                        'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
+                        'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
+                        'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
+                        'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
+                        'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
+                        'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
+                        'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
+                        'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item(),\
+                        'psi_1': sem_model.qvar['psi'].var_params[0].item(),\
+                        'psi_2': sem_model.qvar['psi'].var_params[1].item(), \
+                        'psi_3': sem_model.qvar['psi'].var_params[2].item(),\
+                    'sig2': sem_model.qvar['sig2'].var_params[0].item(),\
+                    }, global_step = t)
+    # writer.add_scalars("eta", \
+    #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].exp().item(),\
+    #                     'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
+    #                     'eta1_true': eta[0].item(),\
+    #                     'eta100_mean': sem_model.qvar['eta'].var_params[0][99].exp().item(),\
+    #                     'eta100_sig': sem_model.qvar['eta'].var_params[1][99].exp().item(),\
+    #                     'eta1_true': eta[99].item(),\
+    #                     'eta500_mean': sem_model.qvar['eta'].var_params[0][500].exp().item(),\
+    #                     'eta500_sig': sem_model.qvar['eta'].var_params[1][500].exp().item(),\
+    #                     'eta500_true': eta[500].item(),\
+    #                     'eta750_mean': sem_model.qvar['eta'].var_params[0][750].exp().item(),\
+    #                     'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
+    #                     'eta750_true': eta[750].item(),\
+    #                     }, global_step = t)
