@@ -38,7 +38,7 @@ M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
 sig2= torch.square(sig)
-lam = torch.tensor([0.8, 0.5])
+lam = torch.tensor([10.0, 15.0])
 psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
 psi = torch.square(psi_sqrt)
 
@@ -52,7 +52,7 @@ lr, max_iter = 0.01, 20000
 writer = SummaryWriter("test")
 
 #Fix degenerates
-degenerate = {'psi': psi, 'sig2': sig2}
+degenerate = {'psi': psi, 'sig2': sig2, 'nu': nu, 'lam': lam} #degenerate lam is 2 dimensional
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
