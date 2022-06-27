@@ -7,7 +7,6 @@ from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
 from torch.utils.tensorboard import SummaryWriter
 
-
 #qvar Distributions
 class qvar_normal():
     def __init__(self, size, mu=None, log_s=None):
