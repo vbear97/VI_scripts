@@ -86,22 +86,22 @@ for t in range(max_iter):
     writer.add_scalar(tag = "training_loss: step_size="+str(lr), scalar_value=\
                       loss.item(), global_step = t)
 
-    writer.add_scalars("vp",{
-                       'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
-                        'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
-                        'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
-                        'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
-                        'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
-                        'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
-                    'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
-                    'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
-                    'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
-                    'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item(),\
-                    'psi_1': sem_model.qvar['psi'].var_params[0].item(),\
-                    'psi_2': sem_model.qvar['psi'].var_params[1].item(), \
-                    'psi_3': sem_model.qvar['psi'].var_params[2].item(),\
-                'sig2': sem_model.qvar['sig2'].var_params[0].item(),\
-                    }, global_step = t)
+    # writer.add_scalars("vp",{
+    #                    'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
+    #                     'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
+    #                     'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
+    #                     'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
+    #                     'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
+    #                     'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
+    #                 'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
+    #                 'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
+    #                 'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
+    #                 'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item(),\
+    #                 'psi_1': sem_model.qvar['psi'].var_params[0].item(),\
+    #                 'psi_2': sem_model.qvar['psi'].var_params[1].item(), \
+    #                 'psi_3': sem_model.qvar['psi'].var_params[2].item(),\
+    #             'sig2': sem_model.qvar['sig2'].var_params[0].item(),\
+    #                 }, global_step = t)
     writer.add_scalars("eta", \
                        {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
                         'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
