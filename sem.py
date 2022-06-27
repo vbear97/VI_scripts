@@ -85,7 +85,7 @@ class sem_model():
         'lam': Normal(loc = self.hyper['lam_mean'], \
             scale = torch.sqrt(self.hyper['lam_sig2']*(theta_sample['psi'][1:])))
             }
-
+        
         log_priors = {var: priors[var].log_prob(theta_sample[var]).sum() for var in priors if var not in self.degenerate}
 
         return sum(log_priors.values())
@@ -99,4 +99,3 @@ class sem_model():
         theta_sample = self.generate_theta_sample()
 
         return self.log_like(theta_sample) + self.log_prior(theta_sample) - self.entropy(theta_sample)
-
