@@ -71,9 +71,13 @@ class sem_model():
 
     def log_like(self,theta_sample):
         like_dist_cov = torch.diag(theta_sample['psi'])
+
         lam_full = torch.cat((self.lam1, theta_sample['lam']))
+
         like_dist_means = torch.matmul(theta_sample['eta'].unsqueeze(1), lam_full.unsqueeze(0)) + theta_sample['nu']
+        
         log_like = mvn(like_dist_means, covariance_matrix= like_dist_cov).log_prob(self.y_data).sum()
+
         return log_like
 
     def log_prior(self, theta_sample): 
