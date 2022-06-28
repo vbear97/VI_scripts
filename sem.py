@@ -80,7 +80,7 @@ class sem_model():
         #qvar_family
         self.qvar = {'nu': qvar_normal(self.m), 'lam': qvar_normal((self.m)-1),
         'eta': qvar_normal(self.n), 'psi': 
-        qvar_invgamma(), 'sig2': qvar_invgamma()}
+        qvar_invgamma(self.m), 'sig2': qvar_invgamma(1)}
         #update 
         self.qvar.update(self.degenerate)
 
