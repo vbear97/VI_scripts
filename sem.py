@@ -101,9 +101,13 @@ class sem_model():
     def log_prior(self, theta_sample): 
         #hard coded prior 
         priors = {'nu': Normal(loc = self.hyper['nu_mean'], scale = torch.sqrt(self.hyper['nu_sig2'])), \
-        'sig2': InvGamma(),\
-        'psi': InvGamma(),\
-        'eta': Normal(loc = 0, scale = torch.sqrt(theta_sample['sig2'])), 
+            
+        'sig2': InverseGamma(concentration = self.hyper['sig2_shape'], rate = self.hyper['sig2_rate']),\
+
+        'psi': InverseGamma(concentration = self.hyper['psi_shape'], rate= self.hyper['psi_rate']),\
+
+        'eta': Normal(loc = 0, scale = torch.sqrt(theta_sample['sig2'])),\
+
         'lam': Normal(loc = self.hyper['lam_mean'], \
             scale = torch.sqrt(self.hyper['lam_sig2']*(theta_sample['psi'][1:])))
             }
