@@ -33,7 +33,7 @@ lam_mean = torch.tensor([1.0])
 lam_sig2 = torch.tensor([10.0])
 
 #Set True Values for Parameters 
-N = 1000
+N = 10
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
