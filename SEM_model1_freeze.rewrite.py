@@ -83,6 +83,12 @@ for t in range(max_iter):
     loss = -sem_model.elbo()
     loss.backward()
     optimizer.step()
+
+    print("psi_grad", sem_model.qvar['psi'].var_params.grad)
+    print("nu_grad", sem_model.qvar['nu'].var_params.grad)
+    print("lam_grad", sem_model.qvar['lam'].var_params.grad)
+
+
     writer.add_scalar(tag = "training_loss: step_size="+str(lr), scalar_value=\
                       loss.item(), global_step = t)
 

@@ -96,6 +96,8 @@ class sem_model():
         
         log_like = mvn(like_dist_means, covariance_matrix= like_dist_cov).log_prob(self.y_data).sum()
 
+        print("log_like =" ,log_like)
+
         return log_like
 
     def log_prior(self, theta_sample): 
@@ -114,14 +116,20 @@ class sem_model():
         
         log_priors = {var: priors[var].log_prob(theta_sample[var]).sum() for var in priors if var not in self.degenerate}
 
+        print("log_priors", log_priors)
+
         return sum(log_priors.values())
 
     def entropy(self, theta_sample):
         qvar_prob = {var: self.qvar[var].log_prob(sample) for (var,sample) in theta_sample.items()}
+
+        print("entropy", qvar_prob)
 
         return sum(qvar_prob.values())
     
     def elbo(self):
         theta_sample = self.generate_theta_sample()
 
+        print("theta_sample", theta_sample)
+        
         return self.log_like(theta_sample) + self.log_prior(theta_sample) - self.entropy(theta_sample)
