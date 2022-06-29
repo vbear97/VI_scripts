@@ -52,7 +52,7 @@ iter = 20000
 lr = 0.01 
 
 lr_nl= 0.01
-lr_ps= 1.0
+lr_ps= 0.01
 lr_eta = 0.01
 #psi and sigma are slow to converge 
 
@@ -94,7 +94,9 @@ optimizer = torch.optim.SGD([{'params': [sem_model.qvar['nu'].var_params, sem_mo
 #starting psi_params
 
 for t in range(iter):
-    print("psi_params", sem_model.qvar['psi'].var_params])
+    
+    print("psi_params", sem_model.qvar['psi'].var_params)
+
     optimizer.zero_grad()
     loss = -sem_model.elbo()
     loss.backward()
