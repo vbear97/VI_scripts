@@ -52,8 +52,9 @@ class qvar_invgamma():
     def dist(self):
         return InverseGamma(concentration= torch.exp(self.var_params[0]), rate = torch.exp(self.var_params[1]))
     def rsample(self, n = torch.Size([])):
-        print("rsample concentration and rate=", self.dist.base_dist)
-        return self.dist().rsample(n)
+        ig= self.dist()
+        print("rsample concentration and rate=", ig.base_dist.concentration, ig.base_dist.rate)
+        return ig.rsample(n)
     def log_prob(self,x):
         return self.dist().log_prob(x).sum() #assume independent components
 

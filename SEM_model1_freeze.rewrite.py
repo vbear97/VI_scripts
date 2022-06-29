@@ -49,13 +49,13 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 10000
+iter = 20000
 lr = 0.01 
 
 lr_nl= 0.01
-lr_ps= 1.0
+lr_ps= 0.1
 lr_eta = 0.01
-#psi and sigma are slow to converge 
+#psi and sigma are very slow to converge 
 
 writer = SummaryWriter("test")
 
@@ -96,14 +96,14 @@ optimizer = torch.optim.SGD([{'params': [sem_model.qvar['nu'].var_params, sem_mo
 
 for t in range(iter):
     
-    print("psi_params", sem_model.qvar['psi'].var_params)
+    # print("psi_params", sem_model.qvar['psi'].var_params)
 
     optimizer.zero_grad()
     loss = -sem_model.elbo()/N
     loss.backward()
     optimizer.step()
 
-    print("psi_grad", sem_model.qvar['psi'].var_params.grad)
+    # print("psi_grad", sem_model.qvar['psi'].var_params.grad)
 
     writer.add_scalar(tag = "training_loss: parameter varying step size step_size=", scalar_value=\
                       loss.item(), global_step = t)
