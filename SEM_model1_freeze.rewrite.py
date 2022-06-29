@@ -84,14 +84,14 @@ sem_model = sem_model(y_data = y_data, \
     degenerate= degenerate, hyper= hyper)
 # %%
 #Instantiate Optimizer Object with uniform learning rate 
-#optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_model.qvar], lr = lr)
+optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_model.qvar], lr = lr)
 
 
 #Instantiate Optimizer Object with different learning rates for parameter groups
-optimizer = torch.optim.SGD([{'params': [sem_model.qvar['nu'].var_params, sem_model.qvar['lam'].var_params], 'lr': lr_nl},\
-     {'params': [sem_model.qvar['psi'].var_params, sem_model.qvar['sig2'].var_params], 'lr': lr_ps},\
-         {'params':[sem_model.qvar['eta'].var_params], 'lr': lr_eta} 
-         ])
+# optimizer = torch.optim.SGD([{'params': [sem_model.qvar['nu'].var_params, sem_model.qvar['lam'].var_params], 'lr': lr_nl},\
+#      {'params': [sem_model.qvar['psi'].var_params, sem_model.qvar['sig2'].var_params], 'lr': lr_ps},\
+#          {'params':[sem_model.qvar['eta'].var_params], 'lr': lr_eta} 
+#          ])
 # %%
 
 #starting psi_params
@@ -100,7 +100,7 @@ for t in iters:
     # print("psi_params", sem_model.qvar['psi'].var_params)
 
     optimizer.zero_grad()
-    loss = -sem_model.elbo()/N
+    loss = -sem_model.elbo()
     loss.backward()
     optimizer.step()
 
