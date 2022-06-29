@@ -43,15 +43,17 @@ class qvar_degenerate():
 class qvar_invgamma():
     def __init__(self, size, alpha=None, beta=None):
         if alpha is None:
-            log_a = torch.randn(size) #log_alpha
+            log_a = torch.rand(size) + offset #log_alpha
         if beta is None:
-            log_b = torch.randn(size) #log_beta
+            log_b = torch.rand(size) + offset #log_beta
         # Variational parameters
         self.var_params = torch.stack([log_a, log_b]) #unconstrained
         self.var_params.requires_grad = True
     def dist(self):
         return InverseGamma(concentration= torch.exp(self.var_params[0]), rate = torch.exp(self.var_params[1]))
     def rsample(self, n = torch.Size([])):
+        print("rsample_concentration =", self.dist.concentration)
+        print("rsample_rate=", self.dist.rate)
         return self.dist().rsample(n)
     def log_prob(self,x):
         return self.dist().log_prob(x).sum() #assume independent components
