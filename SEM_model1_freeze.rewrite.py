@@ -106,7 +106,7 @@ for t in iters:
 
     # print("psi_grad", sem_model.qvar['psi'].var_params.grad)
 
-    writer.add_scalar(tag = "training_loss: parameter varying step size step_size=", scalar_value=\
+    writer.add_scalar(tag = "training_loss", scalar_value=\
                       loss.item(), global_step = t)
 
     writer.add_scalars("nu and lam",{\
