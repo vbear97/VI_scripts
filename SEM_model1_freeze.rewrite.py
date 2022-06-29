@@ -121,16 +121,16 @@ for t in iters:
                     'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
                     'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item()}, global_step = t)
     
-    # writer.add_scalars("psi and sig2", {\
-    #                 'psi_1_alpha': sem_model.qvar['psi'].var_params[0][0].exp().item(),\
-    #                 'psi_2_alpha': sem_model.qvar['psi'].var_params[0][1].exp().item(),\
-    #                 'psi_3_alpha': sem_model.qvar['psi'].var_params[0][2].exp().item(),\
-    #                 'psi_1_beta': sem_model.qvar['psi'].var_params[1][0].exp().item(), \
-    #                 'psi_2_beta': sem_model.qvar['psi'].var_params[1][1].exp().item(), \
-    #                 'psi_3_beta': sem_model.qvar['psi'].var_params[1][2].exp().item(), \
+    writer.add_scalars("psi and sig2", {\
+                    'psi_1_alpha': sem_model.qvar['psi'].var_params[0][0].exp().item(),\
+                    'psi_2_alpha': sem_model.qvar['psi'].var_params[0][1].exp().item(),\
+                    'psi_3_alpha': sem_model.qvar['psi'].var_params[0][2].exp().item(),\
+                    'psi_1_beta': sem_model.qvar['psi'].var_params[1][0].exp().item(), \
+                    'psi_2_beta': sem_model.qvar['psi'].var_params[1][1].exp().item(), \
+                    'psi_3_beta': sem_model.qvar['psi'].var_params[1][2].exp().item(), \
     #                 # 'sig2_alpha': sem_model.qvar['sig2'].var_params[0].exp().item(),\
     #                 # 'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
-                        # }, global_step = t)
+                        }, global_step = t)
 
     # writer.add_scalars("eta", \
     #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
