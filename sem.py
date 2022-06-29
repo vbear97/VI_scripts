@@ -5,12 +5,12 @@ from sklearn.cluster import k_means
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
-import pyro
-from pyro.distributions import InverseGamma
+#import pyro
+#from pyro.distributions import InverseGamma
 from torch.utils.tensorboard import SummaryWriter
 
 #hard-coded
-offset = 0.5
+offset = 1.0
 
 #qvar Distributions
 class qvar_normal():
@@ -40,6 +40,50 @@ class qvar_degenerate():
     def log_prob(self, x):
         return torch.tensor([0.0])
 
+# class qvar_invgamma():
+#     def __init__(self, size, alpha=None, beta=None):
+#         if alpha is None:
+#             log_a = torch.rand(size) + offset #log_alpha
+#         if beta is None:
+#             log_b = torch.rand(size) + offset #log_beta
+#         # Variational parameters
+#         self.var_params = torch.stack([log_a, log_b]) #unconstrained
+#         self.var_params.requires_grad = True
+#     def dist(self):
+#         return InverseGamma(concentration= torch.exp(self.var_params[0]), rate = torch.exp(self.var_params[1]))
+#     def rsample(self, n = torch.Size([])):
+#         ig= self.dist()
+#         # print("rsample concentration and rate=", ig.base_dist.concentration, ig.base_dist.rate)
+#         return ig.rsample(n)
+#     def log_prob(self,x):
+#         return self.dist().log_prob(x).sum() #assume independent components
+
+class InverseGamma():
+    r'''
+    Creates an Inv-Gamma Distribution parameterised by concentration and rate, where: 
+
+    X ~ Gamma(concentration, rate)
+    Y = 1/X ~  InvGamma(concentration, rate)
+
+    Args: 
+    concentration, rate (float or Tensor): concentration, rate of the Gamma distribution
+    '''
+    def __init__(self, concentration, rate, validate_args = None): 
+        self.base_dist = Gamma(concentration = concentration, rate = rate, validate_args=None)
+        self.concentration = concentration
+        self.rate = rate
+    
+    def log_prob(self,y):
+        #1/0 not a problem here, since log_prob will only be evaluated on theta_sample
+        abs_dj = torch.square(torch.reciprocal(y))
+        y_rec = torch.reciprocal(y)
+        return self.base_dist.log_prob(y_rec) + torch.log(abs_dj)
+    
+    def rsample(self, n= torch.Size([])): 
+        #note that 1/0 is not a problem here.
+        base_sample = self.base_dist.rsample(n)
+        return torch.reciprocal(base_sample)
+    
 class qvar_invgamma():
     def __init__(self, size, alpha=None, beta=None):
         if alpha is None:
@@ -47,16 +91,14 @@ class qvar_invgamma():
         if beta is None:
             log_b = torch.rand(size) + offset #log_beta
         # Variational parameters
-        self.var_params = torch.stack([log_a, log_b]) #unconstrained
+        self.var_params = torch.stack([log_a, log_b]) #are always unconstrained
         self.var_params.requires_grad = True
     def dist(self):
-        return InverseGamma(concentration= torch.exp(self.var_params[0]), rate = torch.exp(self.var_params[1]))
+        return InverseGamma(concentration= torch.exp(self.var_params[0]), rate= torch.exp(self.var_params[1]))
     def rsample(self, n = torch.Size([])):
-        ig= self.dist()
-        # print("rsample concentration and rate=", ig.base_dist.concentration, ig.base_dist.rate)
-        return ig.rsample(n)
+        return self.dist().rsample(n)
     def log_prob(self,x):
-        return self.dist().log_prob(x).sum() #assume independent components
+        return self.dist().log_prob(x).sum() #assuming independent component
 
 # class qvar_invgamma(): #dummy class
 #     def __init__(self, size):
