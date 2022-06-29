@@ -50,7 +50,7 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 20000
+iter = 50000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
@@ -62,7 +62,7 @@ lr_eta = 0.01
 writer = SummaryWriter("test")
 
 #Fix degenerates
-degenerate = {'psi': psi, 'sig2': sig2, 'eta': eta} #degenerate lam is 2 dimensional
+degenerate = {'sig2': sig2, 'eta': eta} #degenerate lam is 2 dimensional
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
