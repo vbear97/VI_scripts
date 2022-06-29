@@ -8,6 +8,7 @@ from sklearn.cluster import k_means
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
+from pyro.distributions import InverseGamma
 from torch.utils.tensorboard import SummaryWriter
 
 from sem import *
@@ -33,7 +34,7 @@ lam_mean = torch.tensor([1.0])
 lam_sig2 = torch.tensor([10.0])
 
 #Set True Values for Parameters 
-N = 10
+N = 1000
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
@@ -48,11 +49,11 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 20000
+iter = 10000
 lr = 0.01 
 
 lr_nl= 0.01
-lr_ps= 0.01
+lr_ps= 1.0
 lr_eta = 0.01
 #psi and sigma are slow to converge 
 
@@ -98,7 +99,7 @@ for t in range(iter):
     print("psi_params", sem_model.qvar['psi'].var_params)
 
     optimizer.zero_grad()
-    loss = -sem_model.elbo()
+    loss = -sem_model.elbo()/N
     loss.backward()
     optimizer.step()
 
