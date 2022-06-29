@@ -68,6 +68,7 @@ class qvar_invgamma():
 
 class sem_model():
     def __init__(self, y_data, degenerate, hyper):
+        
         #user input:
         self.y_data = y_data
         self.degenerate = {var: qvar_degenerate(value) for (var,value) in degenerate.items()}
