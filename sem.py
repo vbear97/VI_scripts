@@ -9,6 +9,9 @@ import pyro
 from pyro.distributions import InverseGamma
 from torch.utils.tensorboard import SummaryWriter
 
+#hard-coded
+offset = 0.5
+
 #qvar Distributions
 class qvar_normal():
     def __init__(self, size, mu=None, log_s=None):
