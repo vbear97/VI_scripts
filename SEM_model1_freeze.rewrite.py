@@ -51,7 +51,7 @@ lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
 iter = 50000
-iters = trange(iter, min_interval = 1)
+iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
 lr_nl= 0.01
