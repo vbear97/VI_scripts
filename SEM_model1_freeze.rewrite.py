@@ -10,6 +10,7 @@ from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
 from pyro.distributions import InverseGamma
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import trange
 
 from sem import *
 # %% 
@@ -50,6 +51,7 @@ lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
 iter = 50000
+iters = trange(iter, min_interval = 1)
 lr = 0.01 
 
 lr_nl= 0.01
@@ -94,8 +96,7 @@ optimizer = torch.optim.SGD([{'params': [sem_model.qvar['nu'].var_params, sem_mo
 
 #starting psi_params
 
-for t in range(iter):
-    
+for t in range(iters):
     # print("psi_params", sem_model.qvar['psi'].var_params)
 
     optimizer.zero_grad()
