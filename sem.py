@@ -5,8 +5,8 @@ from sklearn.cluster import k_means
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
-#import pyro
-#from pyro.distributions import InverseGamma
+import pyro
+from pyro.distributions import InverseGamma
 from torch.utils.tensorboard import SummaryWriter
 
 #hard-coded
@@ -40,36 +40,36 @@ class qvar_degenerate():
     def log_prob(self, x):
         return torch.tensor([0.0])
 
-# class qvar_invgamma():
-#     def __init__(self, size, alpha=None, beta=None):
-#         if alpha is None:
-#             log_a = torch.rand(size) + offset #log_alpha
-#         if beta is None:
-#             log_b = torch.rand(size) + offset #log_beta
-#         # Variational parameters
-#         self.var_params = torch.stack([log_a, log_b]) #unconstrained
-#         self.var_params.requires_grad = True
-#     def dist(self):
-#         return InverseGamma(concentration= torch.exp(self.var_params[0]), rate = torch.exp(self.var_params[1]))
-#     def rsample(self, n = torch.Size([])):
-#         ig= self.dist()
-#         # print("rsample concentration and rate=", ig.base_dist.concentration, ig.base_dist.rate)
-#         return ig.rsample(n)
-#     def log_prob(self,x):
-#         return self.dist().log_prob(x).sum() #assume independent components
+class qvar_invgamma():
+    def __init__(self, size, alpha=None, beta=None):
+        if alpha is None:
+            log_a = torch.rand(size) + offset #log_alpha
+        if beta is None:
+            log_b = torch.rand(size) + offset #log_beta
+        # Variational parameters
+        self.var_params = torch.stack([log_a, log_b]) #unconstrained
+        self.var_params.requires_grad = True
+    def dist(self):
+        return InverseGamma(concentration= torch.exp(self.var_params[0]), rate = torch.exp(self.var_params[1]))
+    def rsample(self, n = torch.Size([])):
+        ig= self.dist()
+        # print("rsample concentration and rate=", ig.base_dist.concentration, ig.base_dist.rate)
+        return ig.rsample(n)
+    def log_prob(self,x):
+        return self.dist().log_prob(x).sum() #assume independent components
 
-class qvar_invgamma(): #dummy class
-    def __init__(self, size):
-        self.var_params = None 
-        return #do nothing
-    def log_prob(self, x):
-        return torch.tensor([0.0])
+# class qvar_invgamma(): #dummy class
+#     def __init__(self, size):
+#         self.var_params = None 
+#         return #do nothing
+#     def log_prob(self, x):
+#         return torch.tensor([0.0])
 
-class InverseGamma(): #dummy class 
-    def __init__(self, concentration, rate):
-        return #do nothing
-    def log_prob(self, x):
-        return torch.tensor([0.0])
+# class InverseGamma(): #dummy class 
+#     def __init__(self, concentration, rate):
+#         return #do nothing
+#     def log_prob(self, x):
+#         return torch.tensor([0.0])
 
 class sem_model():
     def __init__(self, y_data, degenerate, hyper):
