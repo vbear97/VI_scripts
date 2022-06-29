@@ -8,10 +8,9 @@ from sklearn.cluster import k_means
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
-#from pyro.distributions import InverseGamma
-from torch.utils.tensorboard import SummaryWriter
 from tqdm import trange
 
+from torch.utils.tensorboard import SummaryWriter
 from sem import *
 # %% 
 #User to change: 
@@ -40,7 +39,7 @@ M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
 sig2= torch.square(sig)
-lam = torch.tensor([0.8, 0.5])
+lam = torch.tensor([10.0, 15.0])
 psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
 psi = torch.square(psi_sqrt)
 
@@ -62,7 +61,7 @@ lr_eta = 0.01
 writer = SummaryWriter("test")
 
 #Fix degenerates
-degenerate = {'sig2': sig2, 'eta': eta, 'psi': psi} #degenerate lam is 2 dimensional
+degenerate = {'psi': psi, 'sig2': sig2, 'nu': nu, 'lam': lam} #degenerate lam is 2 dimensional
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
