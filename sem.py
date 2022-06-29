@@ -5,7 +5,7 @@ from sklearn.cluster import k_means
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
-import pyro
+#import pyro
 #from pyro.distributions import InverseGamma
 from torch.utils.tensorboard import SummaryWriter
 
