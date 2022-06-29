@@ -49,7 +49,7 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 20000
+iter = 50000
 lr = 0.01 
 
 lr_nl= 0.01
