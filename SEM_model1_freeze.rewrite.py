@@ -62,7 +62,7 @@ lr_eta = 0.01
 writer = SummaryWriter("test")
 
 #Fix degenerates
-degenerate = {'psi': psi, 'sig2': sig2, 'nu': nu, 'lam': lam} #degenerate lam is 2 dimensional
+degenerate = {'psi': psi, 'sig2': sig2, 'eta': eta} #degenerate lam is 2 dimensional
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
