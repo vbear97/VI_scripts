@@ -50,7 +50,7 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 50000
+iter = 20000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
@@ -62,7 +62,7 @@ lr_eta = 0.01
 writer = SummaryWriter("test")
 
 #Fix degenerates
-degenerate = {'sig2':sig2, 'eta': eta, 'nu': nu, 'lam': lam} #degenerate lam is 2 dimensional
+degenerate = {'sig2': sig2, 'eta': eta, 'psi': psi} #degenerate lam is 2 dimensional
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
@@ -96,7 +96,7 @@ optimizer = torch.optim.SGD([{'params': [sem_model.qvar['nu'].var_params, sem_mo
 
 #starting psi_params
 
-for t in range(iters):
+for t in iters:
     # print("psi_params", sem_model.qvar['psi'].var_params)
 
     optimizer.zero_grad()
@@ -109,28 +109,28 @@ for t in range(iters):
     writer.add_scalar(tag = "training_loss: parameter varying step size step_size=", scalar_value=\
                       loss.item(), global_step = t)
 
-    # writer.add_scalars("nu and lam",{\
-    #                 'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
-    #                 'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
-    #                 'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
-    #                 'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
-    #                 'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
-    #                 'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
-    #                 'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
-    #                 'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
-    #                 'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
-    #                 'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item()}, global_step = t)
+    writer.add_scalars("nu and lam",{\
+                    'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
+                    'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
+                    'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
+                    'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
+                    'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
+                    'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
+                    'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
+                    'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
+                    'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
+                    'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item()}, global_step = t)
     
-    writer.add_scalars("psi and sig2", {\
-                    'psi_1_alpha': sem_model.qvar['psi'].var_params[0][0].exp().item(),\
-                    'psi_2_alpha': sem_model.qvar['psi'].var_params[0][1].exp().item(),\
-                    'psi_3_alpha': sem_model.qvar['psi'].var_params[0][2].exp().item(),\
-                    'psi_1_beta': sem_model.qvar['psi'].var_params[1][0].exp().item(), \
-                    'psi_2_beta': sem_model.qvar['psi'].var_params[1][1].exp().item(), \
-                    'psi_3_beta': sem_model.qvar['psi'].var_params[1][2].exp().item(), \
+    # writer.add_scalars("psi and sig2", {\
+    #                 'psi_1_alpha': sem_model.qvar['psi'].var_params[0][0].exp().item(),\
+    #                 'psi_2_alpha': sem_model.qvar['psi'].var_params[0][1].exp().item(),\
+    #                 'psi_3_alpha': sem_model.qvar['psi'].var_params[0][2].exp().item(),\
+    #                 'psi_1_beta': sem_model.qvar['psi'].var_params[1][0].exp().item(), \
+    #                 'psi_2_beta': sem_model.qvar['psi'].var_params[1][1].exp().item(), \
+    #                 'psi_3_beta': sem_model.qvar['psi'].var_params[1][2].exp().item(), \
     #                 # 'sig2_alpha': sem_model.qvar['sig2'].var_params[0].exp().item(),\
     #                 # 'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
-                        }, global_step = t)
+                        # }, global_step = t)
 
     # writer.add_scalars("eta", \
     #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
