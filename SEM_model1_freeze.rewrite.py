@@ -12,7 +12,9 @@ from torch.distributions import MultivariateNormal as mvn
 from tqdm import trange
 
 from torch.utils.tensorboard import SummaryWriter
+
 from sem import *
+
 # %% 
 #User to change: 
 # Set Hyperparameters, True Param Values, Optimization Parameters
@@ -93,8 +95,7 @@ optimizer = torch.optim.Adam([{'params': [sem_model.qvar['nu'].var_params, sem_m
          {'params':[sem_model.qvar['eta'].var_params], 'lr': lr_eta} 
          ])
 # %%
-
-#starting psi_params
+#Do Variational Inference 
 
 for t in iters:
     # print("psi_params", sem_model.qvar['psi'].var_params)
@@ -161,4 +162,13 @@ for t in iters:
     #                     'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
     #                     'eta750_true': eta[750].item(),\
     #                     }, global_step = t)
+# %%
+#Record q* parameters 
+#get sem.qvar 
 
+# %%
+#DO MCMC 
+#Same sample data, get posteriors 
+#Sample 
+# %%
+#Comparative Visualisation with 2 data frames 
