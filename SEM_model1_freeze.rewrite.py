@@ -4,7 +4,8 @@
 from re import S
 from turtle import update
 from sklearn.cluster import k_means
-#hello stage 1
+
+
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
