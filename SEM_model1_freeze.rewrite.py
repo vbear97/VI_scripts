@@ -175,7 +175,7 @@ for t in iters:
 # %%
 #Record q* parameters 
 #get sem.qvar 
-#dfv
+#want a pandas data frame
 
 # %%
 #DO MCMC 
