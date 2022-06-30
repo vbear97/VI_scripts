@@ -55,7 +55,7 @@ iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
 lr_nl= 0.01
-lr_ps= 0.05
+lr_ps= 0.01
 lr_eta = 0.01
 #psi and sigma are very slow to converge 
 
@@ -161,3 +161,4 @@ for t in iters:
     #                     'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
     #                     'eta750_true': eta[750].item(),\
     #                     }, global_step = t)
+
