@@ -55,7 +55,7 @@ iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
 lr_nl= 0.01
-lr_ps= 0.1
+lr_ps= 0.05
 lr_eta = 0.01
 #psi and sigma are very slow to converge 
 
