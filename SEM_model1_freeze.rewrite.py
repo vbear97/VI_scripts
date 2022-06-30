@@ -14,6 +14,7 @@ from tqdm import trange
 #My packages
 from sem import *
 from mcmc import *
+from vis import *
 
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
@@ -185,4 +186,4 @@ for t in iters:
 #Comparative Visualisation with 2 data frames
 # dfm
 # dfv
-#  
+# save file of comparative visualisations to 2 different places 
