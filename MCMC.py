@@ -10,9 +10,7 @@ from tqdm import trange
 #import pystan packages 
 import stan
 
-# %%
 # %% 
-
 #Set True Values for Parameters 
 N = 1000
 M = 3
@@ -29,14 +27,12 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 # %%
-# %%
 #Generate y values based on User Input
 # yi ~ id Normal(nu + eta_i * lam, diag(psi)), yi /in R^m
 #cov:
 like_dist_cov = torch.diag(psi) #m*m tensor 
 #means: want a n*m vector of means
 like_dist_means = torch.matmul(eta.unsqueeze(1), lam_full.unsqueeze(0)) + nu
-
 #Generate yi
 y_data = mvn(like_dist_means, covariance_matrix= like_dist_cov).rsample() #n*m tensor
 
