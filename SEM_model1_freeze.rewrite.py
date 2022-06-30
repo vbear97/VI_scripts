@@ -5,15 +5,24 @@ from re import S
 from turtle import update
 from sklearn.cluster import k_means
 
-
+#For Variational Inference 
 import torch
 from torch.distributions import Normal, Gamma, Binomial
 from torch.distributions import MultivariateNormal as mvn
 from tqdm import trange
 
+#My packages
+from sem import *
+from mcmc import *
+
+#Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
 
-from sem import *
+#For Visualisation and Sampling 
+import math
+import numpy as np
+import pandas as pd
+import matplotlib as plt
 
 # %% 
 #User to change: 
@@ -165,10 +174,15 @@ for t in iters:
 # %%
 #Record q* parameters 
 #get sem.qvar 
+#dfv
 
 # %%
 #DO MCMC 
 #Same sample data, get posteriors 
 #Sample 
+#Output: dfm
 # %%
-#Comparative Visualisation with 2 data frames 
+#Comparative Visualisation with 2 data frames
+# dfm
+# dfv
+#  
