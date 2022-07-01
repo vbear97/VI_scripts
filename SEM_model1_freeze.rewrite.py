@@ -177,6 +177,7 @@ for t in iters:
 #get sem.qvar 
 #want a pandas data frame
 
+
 # %%
 #DO MCMC 
 #Same sample data, get posteriors 
