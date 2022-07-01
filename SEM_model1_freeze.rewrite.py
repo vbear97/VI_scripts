@@ -52,7 +52,7 @@ M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
 sig2= torch.square(sig)
-lam = torch.tensor([10.0, 15.0])
+lam = torch.tensor([0.8, 0.5])
 psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
 psi = torch.square(psi_sqrt)
 
@@ -62,7 +62,7 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 75000
+iter = 100000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
