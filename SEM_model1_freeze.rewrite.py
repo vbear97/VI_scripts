@@ -74,7 +74,7 @@ lr_eta = 0.01
 writer = SummaryWriter("test")
 
 #Fix degenerates
-degenerate = {'sig2': sig2, 'eta': eta, 'nu': nu, 'lam': lam} #degenerate lam is 2 dimensional
+degenerate = {} #degenerate lam is 2 dimensional
 
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
@@ -120,17 +120,17 @@ for t in iters:
     writer.add_scalar(tag = "training_loss", scalar_value=\
                       loss.item(), global_step = t)
 
-    # writer.add_scalars("nu and lam",{\
-    #                 'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
-    #                 'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
-    #                 'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
-    #                 'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
-    #                 'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
-    #                 'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
-    #                 'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
-    #                 'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
-    #                 'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
-    #                 'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item()}, global_step = t)
+    writer.add_scalars("nu and lam",{\
+                    'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
+                    'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
+                    'nu3_sig': sem_model.qvar['nu'].var_params[1][2].exp().item(),\
+                    'nu1_mean': sem_model.qvar['nu'].var_params[0][0].item(),\
+                    'nu2_mean': sem_model.qvar['nu'].var_params[0][1].item(), \
+                    'nu3_mean ': sem_model.qvar['nu'].var_params[0][2].item(), \
+                    'lambda2_mean': sem_model.qvar['lam'].var_params[0][0].item(),\
+                    'lambda2_sig': sem_model.qvar['lam'].var_params[1][0].exp().item(),\
+                    'lambda3_sig': sem_model.qvar['lam'].var_params[1][1].exp().item(),\
+                    'lambda3_mean': sem_model.qvar['lam'].var_params[0][1].item()}, global_step = t)
     
     writer.add_scalars("psi and sig2", {\
                     'psi_1_alpha': sem_model.qvar['psi'].var_params[0][0].exp().item(),\
@@ -139,39 +139,39 @@ for t in iters:
                     'psi_1_beta': sem_model.qvar['psi'].var_params[1][0].exp().item(), \
                     'psi_2_beta': sem_model.qvar['psi'].var_params[1][1].exp().item(), \
                     'psi_3_beta': sem_model.qvar['psi'].var_params[1][2].exp().item(), \
-    #                 # 'sig2_alpha': sem_model.qvar['sig2'].var_params[0].exp().item(),\
-    #                 # 'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
+                    'sig2_alpha': sem_model.qvar['sig2'].var_params[0].exp().item(),\
+                    'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
                         }, global_step = t)
 
-    # writer.add_scalars("eta", \
-    #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
-    #                     'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
-    #                     'eta1_true': eta[0].item(),\
-    #                     'eta50_mean': sem_model.qvar['eta'].var_params[0][50].item(),\
-    #                     'eta50_sig': sem_model.qvar['eta'].var_params[1][50].exp().item(),\
-    #                     'eta50_true': eta[50].item(),\
-    #                     'eta100_mean': sem_model.qvar['eta'].var_params[0][99].item(),\
-    #                     'eta100_sig': sem_model.qvar['eta'].var_params[1][99].exp().item(),\
-    #                     'eta100_true': eta[99].item(),\
-    #                     'eta200_mean': sem_model.qvar['eta'].var_params[0][200].item(),\
-    #                     'eta200_sig': sem_model.qvar['eta'].var_params[1][200].exp().item(),\
-    #                     'eta200_true': eta[200].item(),\
-    #                     'eta300_mean': sem_model.qvar['eta'].var_params[0][300].item(),\
-    #                     'eta300_sig': sem_model.qvar['eta'].var_params[1][300].exp().item(),\
-    #                     'eta300_true': eta[300].item(),\
-    #                     'eta400_mean': sem_model.qvar['eta'].var_params[0][400].item(),\
-    #                     'eta400_sig': sem_model.qvar['eta'].var_params[1][400].exp().item(),\
-    #                     'eta400_true': eta[400].item(),\
-    #                     'eta500_mean': sem_model.qvar['eta'].var_params[0][500].item(),\
-    #                     'eta500_sig': sem_model.qvar['eta'].var_params[1][500].exp().item(),\
-    #                     'eta500_true': eta[500].item(),\
-    #                     'eta600_mean': sem_model.qvar['eta'].var_params[0][600].item(),\
-    #                     'eta600_sig': sem_model.qvar['eta'].var_params[1][600].exp().item(),\
-    #                     'eta600_true': eta[600].item(),\
-    #                     'eta750_mean': sem_model.qvar['eta'].var_params[0][750].item(),\
-    #                     'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
-    #                     'eta750_true': eta[750].item(),\
-    #                     }, global_step = t)
+    writer.add_scalars("eta", \
+                       {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
+                        'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
+                        'eta1_true': eta[0].item(),\
+                        'eta50_mean': sem_model.qvar['eta'].var_params[0][50].item(),\
+                        'eta50_sig': sem_model.qvar['eta'].var_params[1][50].exp().item(),\
+                        'eta50_true': eta[50].item(),\
+                        'eta100_mean': sem_model.qvar['eta'].var_params[0][99].item(),\
+                        'eta100_sig': sem_model.qvar['eta'].var_params[1][99].exp().item(),\
+                        'eta100_true': eta[99].item(),\
+                        'eta200_mean': sem_model.qvar['eta'].var_params[0][200].item(),\
+                        'eta200_sig': sem_model.qvar['eta'].var_params[1][200].exp().item(),\
+                        'eta200_true': eta[200].item(),\
+                        'eta300_mean': sem_model.qvar['eta'].var_params[0][300].item(),\
+                        'eta300_sig': sem_model.qvar['eta'].var_params[1][300].exp().item(),\
+                        'eta300_true': eta[300].item(),\
+                        'eta400_mean': sem_model.qvar['eta'].var_params[0][400].item(),\
+                        'eta400_sig': sem_model.qvar['eta'].var_params[1][400].exp().item(),\
+                        'eta400_true': eta[400].item(),\
+                        'eta500_mean': sem_model.qvar['eta'].var_params[0][500].item(),\
+                        'eta500_sig': sem_model.qvar['eta'].var_params[1][500].exp().item(),\
+                        'eta500_true': eta[500].item(),\
+                        'eta600_mean': sem_model.qvar['eta'].var_params[0][600].item(),\
+                        'eta600_sig': sem_model.qvar['eta'].var_params[1][600].exp().item(),\
+                        'eta600_true': eta[600].item(),\
+                        'eta750_mean': sem_model.qvar['eta'].var_params[0][750].item(),\
+                        'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
+                        'eta750_true': eta[750].item(),\
+                        }, global_step = t)
 # %%
 #Record q* parameters 
 #get sem.qvar 
