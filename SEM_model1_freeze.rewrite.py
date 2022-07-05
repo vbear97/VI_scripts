@@ -13,8 +13,8 @@ from tqdm import trange
 
 #My packages
 from sem import *
-from mcmc import *
-from vis import *
+#from mcmc import *
+#from vis import *
 
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
