@@ -70,18 +70,21 @@ def mc(data):
     data {
     int<lower=0> N; // number of individuals
     int<lower=0> K; // number of items
-    vector[K] y[N]; // Y matrix of K items for N individuals
-    real mu_lambda; //prior for lambda
-    real<lower=0> sig2_lambda; // prior for lambda
-    real delta_psi[K]; // prior for psi
-    real delta_sig2; // prior for sigma^2
-    real<lower=0> sigma_nu; // prior for nu
+    vector[K] y[N]; //Y matrix of K items for N individuadls
+    real lam_mean; //prior mean for lambda
+    real<lower=0> lam_sig2; //prior variance for lambda
+    real nu_mean; //prior mean for nu 
+    real<lower=0> nu_sig2; //prior variance for nu 
+    real<lower=0> sig2_shape; 
+    real<lower=0> sig2_rate; 
+    real<lower=0> psi_shape;  
+    real<lower=0> psi_rate;
     }
 
     parameters {
     vector[N] eta_norm; // normalized eta for each individual
     vector[K] nu; // int for item k
-    vector<lower=0>[K-1] lambday; // loading item k, fixing the first to be 1
+    vector<lower=0>[K-1] lambday; // loading item m, fixing the first to be 1
     real <lower=0> sigma2; // var of the factor
     vector<lower=0>[K] psidiag; // sd of error
     }
@@ -102,16 +105,17 @@ def mc(data):
     eta_norm ~ normal(0,1) ;
     lambda[1] = 1;
     lambda[2:K] = lambday;
-    target += -1.5*log(sigma2) - 0.5*delta_sig2/(sigma2);
+
+    sigma2 ~ inv_gamma(sig2_shape, sig2_rate);
     
     for(k in 1:K){
-        target += -1.5*log(psidiag[k]) - 0.5*delta_psi[k]/(psidiag[k]);
-        nu[k] ~ normal(0,sigma_nu);    
+        psidiag[k]~ inv_gamma(psi_shape, psi_rate);
+        nu[k] ~ normal(0,sqrt(nu_sig2));    
     }
     
     for(k in 1:(K-1) ){
-        cond_sd_lambda[k] = sqrt(sig2_lambda*psidiag[k+1]);
-        lambday[k] ~ normal(mu_lambda,cond_sd_lambda[k]);
+        cond_sd_lambda[k] = sqrt(lam_sig2*psidiag[k+1]);
+        lambday[k] ~ normal(lam_mean,cond_sd_lambda[k]);
     }
     
     for(i in 1:N){   
@@ -131,9 +135,9 @@ def mc(data):
 # %%
 #Prepare data dictionary
 
-data = {"y": y_data.numpy(),\
-        "N": y_data.numpy().shape[0],\
-        "M": y_data.numpy().shape[1]}
+data = {"y": y_data.clone().numpy(),\
+        "N": y_data.size(0),\
+        "K": y_data.size(1)}
 h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
 #replace keys with appropriate names
@@ -144,6 +148,9 @@ data.update(h)
 #change all data type from tensor to numpy 
 
 #sample and visualise 
+
+#don't need: 
+#get rid of nu_mean, hardset to 0
 
 # %%
 #rough diagnostics: check the arithmetic mean, mode and variance 
