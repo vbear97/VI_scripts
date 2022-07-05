@@ -8,6 +8,8 @@ from torch.distributions import MultivariateNormal as mvn
 from tqdm import trange
 
 #import pystan packages 
+import nest_asyncio
+nest_asyncio.apply()
 import stan
 
 #import relevant packages
@@ -37,7 +39,7 @@ hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shap
 
 # %% 
 #Set True Values for Parameters 
-N = 10
+N = 1000
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
@@ -128,9 +130,7 @@ def mc(data):
     }
         """
     #Build posterior 
-    posterior = stan.build(mccode, data)
-    #fit = posterior.sample(num_chains = num_chains, num_samples = num_samples) #do MCMC for default number of iterations, 
-    #df = fit.to_frame()
+    posterior = stan.build(mccode, data) 
     return posterior
 # %%
 #Prepare data dictionary
@@ -140,12 +140,6 @@ data = {"y": y_data.clone().numpy(),\
         "K": y_data.size(1)}
 h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
-#replace keys with appropriate names
-
-#variable transform required for psi and sig2
-#re-parameterise to inv-chi-squared distribution 
-
-#change all data type from tensor to numpy 
 
 #sample and visualise 
 
