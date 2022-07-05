@@ -13,7 +13,7 @@ from tqdm import trange
 
 #My packages
 from sem import *
-from mcmc import * 
+from MCMC import * 
 
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
@@ -104,15 +104,13 @@ sem_model = sem_model(y_data = y_data, \
 #Instantiate Optimizer Object with uniform learning rate 
 # optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_model.qvar], lr = lr)
 
-
 #Instantiate Optimizer Object with different learning rates for parameter groups
 optimizer = torch.optim.Adam([{'params': [sem_model.qvar['nu'].var_params, sem_model.qvar['lam'].var_params], 'lr': lr_nl},\
      {'params': [sem_model.qvar['psi'].var_params, sem_model.qvar['sig2'].var_params], 'lr': lr_ps},\
          {'params':[sem_model.qvar['eta'].var_params], 'lr': lr_eta} 
          ])
 # %%
-#Do Variational Inference 
-
+#Main Part 1: ADVI
 for t in iters:
     # print("psi_params", sem_model.qvar['psi'].var_params)
 
@@ -185,13 +183,17 @@ for t in iters:
 
 
 # %%
-#DO MCMC 
-#Same sample data, get posteriors 
-#Sample 
-#Output: dfm
-
+#Prepare data for MCMC
+data = {"y": y_data.clone().numpy(),\
+        "N": y_data.size(0),\
+        "K": y_data.size(1)}
+h = {var:param.item() for var,param in hyper.items()}
+data.update(h)
 # %%
-#Comparative Visualisation with 2 data frames
-# dfm
-# dfv
-# save file of comparative visualisations to a jpeg or png file for later comparison 
+#Main Part 2: Do MCCMC
+posterior = mc(data)
+fit = posterior.sample(num_chains = 4, num_warmup = 7500, num_samples = 15000)
+diagnostics = az.summary(fit)
+# %%
+#Comparative Visualisation of MCMC vs. ADVI
+
