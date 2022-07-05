@@ -19,16 +19,11 @@ from MCMC import *
 from torch.utils.tensorboard import SummaryWriter
 
 #For Visualisation and Sampling 
-import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#For Stan
-#import relevant mcmcpystan packages 
-import nest_asyncio
-nest_asyncio.apply()
-import stan
+#for mcmc
 import arviz as az
 
 # %% 
@@ -181,7 +176,6 @@ for t in iters:
 #get sem.qvar 
 #want a pandas data frame
 
-
 # %%
 #Prepare data for MCMC
 data = {"y": y_data.clone().numpy(),\
@@ -190,10 +184,21 @@ data = {"y": y_data.clone().numpy(),\
 h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
 # %%
-#Main Part 2: Do MCCMC
+#Main Part 2: Do MCMC
 posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = 7500, num_samples = 15000)
-diagnostics = az.summary(fit)
-# %%
-#Comparative Visualisation of MCMC vs. ADVI
+fit = posterior.sample(num_chains = 4, num_warmup = 100, num_samples = 100)
+fitp = fit.to_frame() #convert to pandas data frame
 
+#why is it taking so long to run?
+# %%
+#Comparative Visualisation of MCMC vs MFVG 
+
+#Columns of Interest
+var = ['nu.1', 'nu.2', 'nu.3'\
+    'lambday.1', 'lambday',\
+        'sig2'\
+        ]
+
+fig,axs = plt.subplots(5,2)
+for ax in axs: 
+    
