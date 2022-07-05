@@ -183,8 +183,9 @@ for t in iters:
 #Same sample data, get posteriors 
 #Sample 
 #Output: dfm
+
 # %%
 #Comparative Visualisation with 2 data frames
 # dfm
 # dfv
-# save file of comparative visualisations to 2 different places 
+# save file of comparative visualisations to a jpeg or png file for later comparison 
