@@ -137,15 +137,15 @@ def mc(data):
 # %%
 #Prepare data dictionary
 
-data = {"y": y_data.clone().numpy(),\
-        "N": y_data.size(0),\
-        "K": y_data.size(1)}
-h = {var:param.item() for var,param in hyper.items()}
-data.update(h)
+# data = {"y": y_data.clone().numpy(),\
+#         "N": y_data.size(0),\
+#         "K": y_data.size(1)}
+# h = {var:param.item() for var,param in hyper.items()}
+# data.update(h)
 
 #sample and visualise 
-posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = 7500, num_samples = 15000)
+# posterior = mc(data)
+# fit = posterior.sample(num_chains = 4, num_warmup = 7500, num_samples = 15000)
 
 # %%
 #MCMC Diagnostics
