@@ -10,6 +10,13 @@ from tqdm import trange
 #import pystan packages 
 import stan
 
+#import relevant packages
+import numpy
+import math
+import numpy as np
+import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
 # %%
 sig2_shape = torch.tensor([1.0])  
 sig2_rate = torch.tensor([1.0])  
@@ -30,12 +37,12 @@ hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shap
 
 # %% 
 #Set True Values for Parameters 
-N = 1000
+N = 10
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
 sig2= torch.square(sig)
-lam = torch.tensor([10.0, 15.0])
+lam = torch.tensor([0.8, 0.5])
 psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
 psi = torch.square(psi_sqrt)
 
@@ -55,14 +62,11 @@ like_dist_means = torch.matmul(eta.unsqueeze(1), lam_full.unsqueeze(0)) + nu
 y_data = mvn(like_dist_means, covariance_matrix= like_dist_cov).rsample() #n*m tensor
 
 # %%
-#Task 1: Prepare MCMC code 
+#Write mcmc function 
 
-def mc(y_data, hyper, num_chains, num_samples):
+def mc(data, num_chains, num_samples):
 
-    #return pandas dataframe of sampled values from mc posteriors, full model
-
-    mccode= """
-
+    mccode = """
     data {
     int<lower=0> N; // number of individuals
     int<lower=0> K; // number of items
@@ -98,7 +102,7 @@ def mc(y_data, hyper, num_chains, num_samples):
     eta_norm ~ normal(0,1) ;
     lambda[1] = 1;
     lambda[2:K] = lambday;
-    target += -1.5*log(sigma2) - 0.5*delta_sig2/(sigma2);
+    target += -1.5*log(sigma2) - 0.5*delta_sig2/(sigma2); //
     
     for(k in 1:K){
         target += -1.5*log(psidiag[k]) - 0.5*delta_psi[k]/(psidiag[k]);
@@ -118,21 +122,26 @@ def mc(y_data, hyper, num_chains, num_samples):
     
     y ~ multi_normal(mu,Sigma); 
     }
-    """
-    
-    data = {"y": y_data,\
-            "N": y_data.size(0),\
-            "M": y_data.size(1),\
-            }
-
-    data.update(hyper)
-
+        """
+    #Build posterior 
     posterior = stan.build(mccode, data)
-    fit =posterior.sample(num_chains = num_chains, num_samples = num_samples) #do MCMC for default number of iterations, 
-
-    df = fit.to_frame()
-
-    return df 
+    #fit = posterior.sample(num_chains = num_chains, num_samples = num_samples) #do MCMC for default number of iterations, 
+    #df = fit.to_frame()
+    return posterior
 # %%
-df = mc(y_data, hyper=hyper, num_chains = 1, num_samples=1000)
+#Prepare data dictionary
+
+data = {"y": y_data.numpy(),\
+        "N": y_data.numpy().shape[0],\
+        "K": y_data.numpy().shape[1]}
+
+h = hyper.copy()
+#replace keys with appropriate names
+
+#variable transform required for psi and sig2
+
+#change all data type from tensor to numpy 
+
+posterior = mc(data, num_chains = 1, num_samples=1000)
+
 # %%
