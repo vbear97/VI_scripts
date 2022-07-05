@@ -13,8 +13,7 @@ from tqdm import trange
 
 #My packages
 from sem import *
-#from mcmc import *
-#from vis import *
+from mcmc import * 
 
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
@@ -23,7 +22,14 @@ from torch.utils.tensorboard import SummaryWriter
 import math
 import numpy as np
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
+
+#For Stan
+#import relevant mcmcpystan packages 
+import nest_asyncio
+nest_asyncio.apply()
+import stan
+import arviz as az
 
 # %% 
 #User to change: 
