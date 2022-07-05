@@ -66,45 +66,61 @@ y_data = mvn(like_dist_means, covariance_matrix= like_dist_cov).rsample() #n*m t
 
 def mc(data):
 
-    mccode = """
-    data{
-        int<lower=1> N; //number of individuals
-        int <lower=1> M; // number of items 
-        matrix[N,M] real y; //y_data 
-        real<lower=0> sig2_shape; 
-        real<lower=0> sig2_rate; 
-        real<lower=0> psi_shape;  
-        real<lower=0> psi_rate; 
-        real<lower=0> nu_sig2; 
-        real nu_mean; 
-        real lam_mean; 
-        real<lower=0> lam_sig2;
+    mccode= """
+    data {
+    int<lower=0> N; // number of individuals
+    int<lower=0> K; // number of items
+    vector[K] y[N]; // Y matrix of K items for N individuals
+    real mu_lambda; //prior for lambda
+    real<lower=0> sig2_lambda; // prior for lambda
+    real delta_psi[K]; // prior for psi
+    real delta_sig2; // prior for sigma^2
+    real<lower=0> sigma_nu; // prior for nu
     }
-    parameters{
-        vector[M] real nu; //intercept term
-        vector[N] real eta; //latent 
-        vector[M] real<lower=0> psi; //variance
-        real<lower=0> sig2; //latent variance
-        vector[M-1] real lam; //scaling term
+
+    parameters {
+    vector[N] eta_norm; // normalized eta for each individual
+    vector[K] nu; // int for item k
+    vector<lower=0>[K-1] lambday; // loading item k, fixing the first to be 1
+    real <lower=0> sigma2; // var of the factor
+    vector<lower=0>[K] psidiag; // sd of error
     }
     transformed parameters{
-        vector[M] lamf; 
-        lamf = append_row(1, lam); //full lam vector 
-        psi_cut = psi[2:]
+    vector[N] eta;
+    real sigma;
+    sigma = sqrt(sigma2);
+    eta = sigma*eta_norm; 
     }
+
     model{
-        array[N] vector[M] mu;
-
-        for (n in 1:N) {
-        mu[n] = (lamf * eta[n]) + nu
-        }
-
-        y ~ multi_normal(mu, diag_matrix(psi)); //likelihood definition
-        sig2 ~ inv_gamma(sig2_shape, sig2_rate); //prior on sig2
-        eta ~ normal(0, sqrt(sig2)); //prior on eta
-        nu ~ normal(0, sqrt(nu_sig2)); //prior on nu
-        psi ~ inv_gamma(psi_shape, psi_rate); //prior on psi
-        lam ~ normal(lm, sqrt(lam_sig2 * psi_cut)); //prior on lam
+    vector[K] mu[N];
+    matrix[K,K] Sigma;
+    
+    real cond_sd_lambda[K-1];
+    vector[K] lambda;
+    
+    eta_norm ~ normal(0,1) ;
+    lambda[1] = 1;
+    lambda[2:K] = lambday;
+    target += -1.5*log(sigma2) - 0.5*delta_sig2/(sigma2);
+    
+    for(k in 1:K){
+        target += -1.5*log(psidiag[k]) - 0.5*delta_psi[k]/(psidiag[k]);
+        nu[k] ~ normal(0,sigma_nu);    
+    }
+    
+    for(k in 1:(K-1) ){
+        cond_sd_lambda[k] = sqrt(sig2_lambda*psidiag[k+1]);
+        lambday[k] ~ normal(mu_lambda,cond_sd_lambda[k]);
+    }
+    
+    for(i in 1:N){   
+        mu[i] = nu + lambda*eta[i];    
+    }
+    
+    Sigma =  diag_matrix(psidiag);
+    
+    y ~ multi_normal(mu,Sigma); 
     }
         """
     #Build posterior 
