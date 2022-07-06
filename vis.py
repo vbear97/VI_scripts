@@ -10,16 +10,18 @@ ax.set_title("hello")
 ax.plot([1,2,3,4], [1,2,3,4]
 # %%
 #Make var string ##optimise later 
-var = ['nu.1', 'nu.2', 'nu.3', 'lambday.1', 'lambday.2', 'psidiag.1', 'psidiag.2', 'psidiag.3', 'sigma2'] 
+var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order: nu, lam, psi,sig2
 
-
-#Data for MCMC for non-latent 
-var = ['nu.1', 'nu.2', 'nu.3', 'lambday.1', 'lambday.2', 'psidiag.1', 'psidiag.2', 'psidiag.3', 'sigma2']
+#Sample MC data
 mcdf = fitp[var]
 
-
-#Data from VB for non-latent
+#Sample VB data (also a dataframe)
 num_sample = torch.tensor([10000])
+vb_sample = np.concatenate([sem_model.qvar[key].dist.rsample(num_sample).detach.numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
+vb_sample = pd.DataFrame(vb_sample, columns = var)
+
+
+
 nus = sem_model.qvar['nu'].dist().rsample(num_sample).detach().numpy()
 vbdf= pd.DataFrame({'nu.1':nus[:,0]})
 vbdf['nu2']= nu.2.tolist()
