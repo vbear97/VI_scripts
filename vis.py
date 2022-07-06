@@ -9,10 +9,9 @@ fig,ax = plt.subplots()
 ax.set_title("hello")
 ax.plot([1,2,3,4], [1,2,3,4]
 # %%
-#script here but run most of it in interactive mode
-#note that can accept pandas dataframes
+#Make var string ##optimise later 
+var = ['nu.1', 'nu.2', 'nu.3', 'lambday.1', 'lambday.2', 'psidiag.1', 'psidiag.2', 'psidiag.3', 'sigma2'] 
 
-#For now, we hard code everything before making it more flexible later
 
 #Data for MCMC for non-latent 
 var = ['nu.1', 'nu.2', 'nu.3', 'lambday.1', 'lambday.2', 'psidiag.1', 'psidiag.2', 'psidiag.3', 'sigma2']

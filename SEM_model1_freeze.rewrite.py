@@ -180,7 +180,7 @@ for t in iters:
 #Prepare data for MCMC
 data = {"y": y_data.clone().numpy(),\
         "N": y_data.size(0),\
-        "K": y_data.size(1)}
+        "M": y_data.size(1)}
 h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
 # %%
