@@ -88,7 +88,7 @@ def mc(data):
     parameters {
     vector[N] eta_norm; // normalized eta for each individual
     vector[M] nu; // int for item m
-    vector<lower=0>[M-1] lambday; // loading item m, fixing the first to be 1
+    vector<lower=0>[M-1] lam; // loading item m, fixing the first to be 1
     real <lower=0> sigma2; // var of the factor
     vector<lower=0>[M] psidiag; // sd of error
     }
@@ -108,7 +108,7 @@ def mc(data):
     
     eta_norm ~ normal(0,1) ;
     lambda[1] = 1;
-    lambda[2:M] = lambday;
+    lambda[2:M] = lam;
 
     sigma2 ~ inv_gamma(sig2_shape, sig2_rate);
     
@@ -119,7 +119,7 @@ def mc(data):
     
     for(m in 1:(M-1) ){
         cond_sd_lambda[m] = sqrt(lam_sig2*psidiag[m+1]);
-        lambday[m] ~ normal(lam_mean,cond_sd_lambda[m]);
+        lam[m] ~ normal(lam_mean,cond_sd_lambda[m]);
     }
     
     for(i in 1:N){   
