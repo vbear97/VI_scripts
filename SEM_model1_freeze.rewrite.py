@@ -22,6 +22,8 @@ from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.patches as mpatches
 
 #for mcmc
 import arviz as az
@@ -66,6 +68,11 @@ lam_full= torch.cat((lam1, lam))
 iter = 100000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
+
+#Set MC Params
+num_chains = 4
+num_warmup = 1000
+num_samples = 10000
 
 lr_nl= 0.01
 lr_ps= 0.01
@@ -172,31 +179,43 @@ for t in iters:
                         'eta750_true': eta[750].item(),\
                         }, global_step = t)
 # %%
-#Record q* parameters 
-#get sem.qvar 
-#want a pandas data frame
-
-# # %%
-# #Prepare data for MCMC
-# data = {"y": y_data.clone().numpy(),\
-#         "N": y_data.size(0),\
-#         "M": y_data.size(1)}
-# h = {var:param.item() for var,param in hyper.items()}
-# data.update(h)
-# # %%
-# #Main Part 2: Do MCMC
-# posterior = mc(data)
-# fit = posterior.sample(num_chains = 4, num_warmup = 1000, num_samples = 2000)
-# fitp = fit.to_frame() #convert to pandas data frame
-
-#why is it taking so long to run?
 # %%
-#Comparative Visualisation of MCMC vs MFVG  
-#Need to clean up, but for now just do it in the main file
-#Ideal Pipeline:
-#Do the optimization loop 
-#Prepare data for mcmc
-#get back posterior 
-#run fit, fit_to_frame
-#desired variables
+#Prepare data for MCMC
+data = {"y": y_data.clone().numpy(),\
+        "N": y_data.size(0),\
+        "M": y_data.size(1)}
+h = {var:param.item() for var,param in hyper.items()}
+data.update(h)
+# %%
+#Main Part 2: Do MCMC
+posterior = mc(data)
+fit = posterior.sample(num_chains = 4, num_warmup = 1000, num_samples = 10000)
+fitp = fit.to_frame() #convert to pandas data frame
 
+# %%
+#Comparative Visualisation: Non -Eta Variables 
+#Make var string ##optimise later 
+var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order: nu, lam, psi,sig2
+
+#Sample MC data excluding eta--> pd.df
+mcdf = fitp[var]
+
+#Sample VB data excluding eta ---< pd.df
+num_sample = torch.tensor([10000])
+vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
+vbdf = pd.DataFrame(vb_sample, columns = var)
+
+#Plot Excluding Eta 
+fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10)) 
+fig.delaxes(ax[4,1])
+fig.suptitle("Estimated Posterior Densities for Non-Latent,  N =" + str(N))
+
+#manually add in legend
+green_patch = mpatches.Patch(color='green', label='MCMC app post.')
+blue_patch = mpatches.Patch(color='blue', label='ADVI app post.')
+fig.legend(handles=[green_patch, blue_patch], loc = 'lower left')
+
+for v,a in zip(var,ax.flatten()):
+    sns.histplot(data = mcdf[v], ax = a, color = 'green', stat = 'density', kde = True)
+    sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True)
+fig.save_fig("Test Run with Simulated Data, N=" + str(N) + "vb_numiter=" + str(iter), "mcnum_iter= " + str())
