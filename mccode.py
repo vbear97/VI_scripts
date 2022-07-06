@@ -40,7 +40,7 @@ lam_sig2 = torch.tensor([10.0])
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
 
 # %% 
-Set True Values for Parameters 
+#Set True Values for Parameters 
 N = 1000
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
@@ -57,8 +57,8 @@ lam_full= torch.cat((lam1, lam))
 
 # %%
 #Generate y values based on User Input
-yi ~ id Normal(nu + eta_i * lam, diag(psi)), yi /in R^m
-cov:
+# yi ~ id Normal(nu + eta_i * lam, diag(psi)), yi /in R^m
+#cov:diag(psi)
 like_dist_cov = torch.diag(psi) #m*m tensor 
 #means: want a n*m vector of means
 like_dist_means = torch.matmul(eta.unsqueeze(1), lam_full.unsqueeze(0)) + nu
