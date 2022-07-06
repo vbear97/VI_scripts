@@ -90,7 +90,7 @@ def mc(data):
     vector[M] nu; // int for item m
     vector<lower=0>[M-1] lam; // loading item m, fixing the first to be 1
     real <lower=0> sig2; // var of the factor
-    vector<lower=0>[M] psidiag; // sd of error
+    vector<lower=0>[M] psi; // sd of error
     }
     transformed parameters{
     vector[N] eta;
@@ -113,12 +113,12 @@ def mc(data):
     sig2 ~ inv_gamma(sig2_shape, sig2_rate);
     
     for(m in 1:M){
-        psidiag[m]~ inv_gamma(psi_shape, psi_rate);
+        psi[m]~ inv_gamma(psi_shape, psi_rate);
         nu[m] ~ normal(0,sqrt(nu_sig2));    
     }
     
     for(m in 1:(M-1) ){
-        cond_sd_lambda[m] = sqrt(lam_sig2*psidiag[m+1]);
+        cond_sd_lambda[m] = sqrt(lam_sig2*psi[m+1]);
         lam[m] ~ normal(lam_mean,cond_sd_lambda[m]);
     }
     
@@ -126,7 +126,7 @@ def mc(data):
         mu[i] = nu + lambda*eta[i];    
     }
     
-    Sigma =  diag_matrix(psidiag);
+    Sigma =  diag_matrix(psi);
     
     y ~ multi_normal(mu,Sigma); 
     }
