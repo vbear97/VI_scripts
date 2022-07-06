@@ -191,14 +191,12 @@ fitp = fit.to_frame() #convert to pandas data frame
 
 #why is it taking so long to run?
 # %%
-#Comparative Visualisation of MCMC vs MFVG 
+#Comparative Visualisation of MCMC vs MFVG  
+#Need to clean up, but for now just do it in the main file
+#Ideal Pipeline:
+#Do the optimization loop 
+#Prepare data for mcmc
+#get back posterior 
+#run fit, fit_to_frame
+#desired variables
 
-#Columns of Interest
-var = ['nu.1', 'nu.2', 'nu.3'\
-    'lambday.1', 'lambday',\
-        'sig2'\
-        ]
-
-fig,axs = plt.subplots(5,2)
-for ax in axs: 
-    
