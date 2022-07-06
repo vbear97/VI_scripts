@@ -63,7 +63,7 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 100000
+iter = 5000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
@@ -176,18 +176,18 @@ for t in iters:
 #get sem.qvar 
 #want a pandas data frame
 
-# %%
-#Prepare data for MCMC
-data = {"y": y_data.clone().numpy(),\
-        "N": y_data.size(0),\
-        "M": y_data.size(1)}
-h = {var:param.item() for var,param in hyper.items()}
-data.update(h)
-# %%
-#Main Part 2: Do MCMC
-posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = 1000, num_samples = 2000)
-fitp = fit.to_frame() #convert to pandas data frame
+# # %%
+# #Prepare data for MCMC
+# data = {"y": y_data.clone().numpy(),\
+#         "N": y_data.size(0),\
+#         "M": y_data.size(1)}
+# h = {var:param.item() for var,param in hyper.items()}
+# data.update(h)
+# # %%
+# #Main Part 2: Do MCMC
+# posterior = mc(data)
+# fit = posterior.sample(num_chains = 4, num_warmup = 1000, num_samples = 2000)
+# fitp = fit.to_frame() #convert to pandas data frame
 
 #why is it taking so long to run?
 # %%
