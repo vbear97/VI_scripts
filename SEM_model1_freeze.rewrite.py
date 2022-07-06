@@ -50,7 +50,7 @@ lam_mean = torch.tensor([1.0])
 lam_sig2 = torch.tensor([10.0])
 
 #Set True Values for Parameters 
-N = 1000
+N = 301
 M = 3
 nu = torch.tensor([5.0, 10.0, 2.0])
 sig = torch.tensor([1.2])
@@ -71,8 +71,8 @@ lr = 0.01
 
 #Set MC Params
 num_chains = 4
-num_warmup = 1000
-num_samples = 10000
+num_warmup = 7500
+num_samples = 15000
 
 lr_nl= 0.01
 lr_ps= 0.01
@@ -149,35 +149,35 @@ for t in iters:
                     'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
                         }, global_step = t)
 
-    writer.add_scalars("eta", \
-                       {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
-                        'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
-                        'eta1_true': eta[0].item(),\
-                        'eta50_mean': sem_model.qvar['eta'].var_params[0][50].item(),\
-                        'eta50_sig': sem_model.qvar['eta'].var_params[1][50].exp().item(),\
-                        'eta50_true': eta[50].item(),\
-                        'eta100_mean': sem_model.qvar['eta'].var_params[0][99].item(),\
-                        'eta100_sig': sem_model.qvar['eta'].var_params[1][99].exp().item(),\
-                        'eta100_true': eta[99].item(),\
-                        'eta200_mean': sem_model.qvar['eta'].var_params[0][200].item(),\
-                        'eta200_sig': sem_model.qvar['eta'].var_params[1][200].exp().item(),\
-                        'eta200_true': eta[200].item(),\
-                        'eta300_mean': sem_model.qvar['eta'].var_params[0][300].item(),\
-                        'eta300_sig': sem_model.qvar['eta'].var_params[1][300].exp().item(),\
-                        'eta300_true': eta[300].item(),\
-                        'eta400_mean': sem_model.qvar['eta'].var_params[0][400].item(),\
-                        'eta400_sig': sem_model.qvar['eta'].var_params[1][400].exp().item(),\
-                        'eta400_true': eta[400].item(),\
-                        'eta500_mean': sem_model.qvar['eta'].var_params[0][500].item(),\
-                        'eta500_sig': sem_model.qvar['eta'].var_params[1][500].exp().item(),\
-                        'eta500_true': eta[500].item(),\
-                        'eta600_mean': sem_model.qvar['eta'].var_params[0][600].item(),\
-                        'eta600_sig': sem_model.qvar['eta'].var_params[1][600].exp().item(),\
-                        'eta600_true': eta[600].item(),\
-                        'eta750_mean': sem_model.qvar['eta'].var_params[0][750].item(),\
-                        'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
-                        'eta750_true': eta[750].item(),\
-                        }, global_step = t)
+    # writer.add_scalars("eta", \
+    #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
+    #                     'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
+    #                     'eta1_true': eta[0].item(),\
+    #                     'eta50_mean': sem_model.qvar['eta'].var_params[0][50].item(),\
+    #                     'eta50_sig': sem_model.qvar['eta'].var_params[1][50].exp().item(),\
+    #                     'eta50_true': eta[50].item(),\
+    #                     'eta100_mean': sem_model.qvar['eta'].var_params[0][99].item(),\
+    #                     'eta100_sig': sem_model.qvar['eta'].var_params[1][99].exp().item(),\
+    #                     'eta100_true': eta[99].item(),\
+    #                     'eta200_mean': sem_model.qvar['eta'].var_params[0][200].item(),\
+    #                     'eta200_sig': sem_model.qvar['eta'].var_params[1][200].exp().item(),\
+    #                     'eta200_true': eta[200].item(),\
+    #                     'eta300_mean': sem_model.qvar['eta'].var_params[0][300].item(),\
+    #                     'eta300_sig': sem_model.qvar['eta'].var_params[1][300].exp().item(),\
+    #                     'eta300_true': eta[300].item(),\
+    #                     'eta400_mean': sem_model.qvar['eta'].var_params[0][400].item(),\
+    #                     'eta400_sig': sem_model.qvar['eta'].var_params[1][400].exp().item(),\
+    #                     'eta400_true': eta[400].item(),\
+    #                     'eta500_mean': sem_model.qvar['eta'].var_params[0][500].item(),\
+    #                     'eta500_sig': sem_model.qvar['eta'].var_params[1][500].exp().item(),\
+    #                     'eta500_true': eta[500].item(),\
+    #                     'eta600_mean': sem_model.qvar['eta'].var_params[0][600].item(),\
+    #                     'eta600_sig': sem_model.qvar['eta'].var_params[1][600].exp().item(),\
+    #                     'eta600_true': eta[600].item(),\
+    #                     'eta750_mean': sem_model.qvar['eta'].var_params[0][750].item(),\
+    #                     'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
+    #                     'eta750_true': eta[750].item(),\
+    #                     }, global_step = t)
 # %%
 # %%
 #Prepare data for MCMC
