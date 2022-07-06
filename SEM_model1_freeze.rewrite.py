@@ -218,4 +218,4 @@ fig.legend(handles=[green_patch, blue_patch], loc = 'lower left')
 for v,a in zip(var,ax.flatten()):
     sns.histplot(data = mcdf[v], ax = a, color = 'green', stat = 'density', kde = True)
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True)
-fig.save_fig("Test Run with Simulated Data, N=" + str(N) + "vb_numiter=" + str(iter), "mcnum_iter= " + str(num_samples))
+fig.save_fig("Test Run with Simulated Data, N=" + str(N) + ", vb_numiter=" + str(iter), ", mcnum_iter= " + str(num_samples))
