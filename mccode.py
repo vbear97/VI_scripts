@@ -135,6 +135,72 @@ def mc(data):
     posterior = stan.build(mccode, data) 
     return posterior
 # %%
+def mc2(data):
+    mccode= """
+    data {
+    int<lower=0> N; // number of individuals
+    int<lower=0> K; // number of items
+    vector[K] y[N]; //Y matrix of K items for N individuadls
+    real lam_mean; //prior mean for lambda
+    real<lower=0> lam_sig2; //prior variance for lambda
+    real nu_mean; //prior mean for nu 
+    real<lower=0> nu_sig2; //prior variance for nu 
+    real<lower=0> sig2_shape; 
+    real<lower=0> sig2_rate; 
+    real<lower=0> psi_shape;  
+    real<lower=0> psi_rate;
+    }
+    parameters {
+    vector[N] eta_norm; // normalized eta for each individual
+    vector[K] nu; // int for item k
+    vector<lower=0>[K-1] lambday; // loading item m, fixing the first to be 1
+    real <lower=0> sigma2; // var of the factor
+    vector<lower=0>[K] psidiag; // sd of error
+    }
+    transformed parameters{
+    vector[N] eta;
+    real sigma;
+    sigma = sqrt(sigma2);
+    eta = sigma*eta_norm; 
+    }
+    model{
+    vector[K] mu[N];
+    matrix[K,K] Sigma;
+    
+    real cond_sd_lambda[K-1];
+    vector[K] lambda;
+    
+    eta_norm ~ normal(0,1) ;
+    lambda[1] = 1;
+    lambda[2:K] = lambday;
+    sigma2 ~ inv_gamma(sig2_shape, sig2_rate);
+    
+    for(k in 1:K){
+        psidiag[k]~ inv_gamma(psi_shape, psi_rate);
+        nu[k] ~ normal(0,sqrt(nu_sig2));    
+    }
+    
+    for(k in 1:(K-1) ){
+        cond_sd_lambda[k] = sqrt(lam_sig2*psidiag[k+1]);
+        lambday[k] ~ normal(lam_mean,cond_sd_lambda[k]);
+    }
+    
+    for(i in 1:N){   
+        mu[i] = nu + lambda*eta[i];    
+    }
+    
+    Sigma =  diag_matrix(psidiag);
+    
+    y ~ multi_normal(mu,Sigma); 
+    }
+        """
+    #Build posterior 
+    posterior = stan.build(mccode, data)
+    #fit = posterior.sample(num_chains = num_chains, num_samples = num_samples) #do MCMC for default number of iterations, 
+    #df = fit.to_frame()
+    posterior = stan.build(mccode, data) 
+    return posterior
+# %%
 #Prepare data dictionary
 
 # data = {"y": y_data.clone().numpy(),\
