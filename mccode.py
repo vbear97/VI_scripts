@@ -198,7 +198,6 @@ def mc2(data):
     posterior = stan.build(mccode, data)
     #fit = posterior.sample(num_chains = num_chains, num_samples = num_samples) #do MCMC for default number of iterations, 
     #df = fit.to_frame()
-    posterior = stan.build(mccode, data) 
     return posterior
 # %%
 #Prepare data dictionary
