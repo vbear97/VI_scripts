@@ -63,7 +63,7 @@ lam1 = torch.tensor([1.0])
 lam_full= torch.cat((lam1, lam))
 
 #Set Optim Params
-iter = 5000
+iter = 100000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
 
