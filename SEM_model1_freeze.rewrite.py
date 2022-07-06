@@ -13,7 +13,7 @@ from tqdm import trange
 
 #My packages
 from sem import *
-from MCMC import * 
+from mccode import * 
 
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
@@ -186,7 +186,7 @@ data.update(h)
 # %%
 #Main Part 2: Do MCMC
 posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = 100, num_samples = 100)
+fit = posterior.sample(num_chains = 4, num_warmup = 1000, num_samples = 2000)
 fitp = fit.to_frame() #convert to pandas data frame
 
 #why is it taking so long to run?
