@@ -73,8 +73,8 @@ def mc(data):
     mccode= """
     data {
     int<lower=0> N; // number of individuals
-    int<lower=0> K; // number of items
-    vector[K] y[N]; //Y matrix of K items for N individuadls
+    int<lower=0> M; // number of items
+    vector[M] y[N]; //Y matrix of M items for N individuadls
     real lam_mean; //prior mean for lambda
     real<lower=0> lam_sig2; //prior variance for lambda
     real nu_mean; //prior mean for nu 
@@ -87,10 +87,10 @@ def mc(data):
 
     parameters {
     vector[N] eta_norm; // normalized eta for each individual
-    vector[K] nu; // int for item k
-    vector<lower=0>[K-1] lambday; // loading item m, fixing the first to be 1
+    vector[M] nu; // int for item m
+    vector<lower=0>[M-1] lambday; // loading item m, fixing the first to be 1
     real <lower=0> sigma2; // var of the factor
-    vector<lower=0>[K] psidiag; // sd of error
+    vector<lower=0>[M] psidiag; // sd of error
     }
     transformed parameters{
     vector[N] eta;
@@ -100,26 +100,26 @@ def mc(data):
     }
 
     model{
-    vector[K] mu[N];
-    matrix[K,K] Sigma;
+    vector[M] mu[N];
+    matrix[M,M] Sigma;
     
-    real cond_sd_lambda[K-1];
-    vector[K] lambda;
+    real cond_sd_lambda[M-1];
+    vector[M] lambda;
     
     eta_norm ~ normal(0,1) ;
     lambda[1] = 1;
-    lambda[2:K] = lambday;
+    lambda[2:M] = lambday;
 
     sigma2 ~ inv_gamma(sig2_shape, sig2_rate);
     
-    for(k in 1:K){
-        psidiag[k]~ inv_gamma(psi_shape, psi_rate);
-        nu[k] ~ normal(0,sqrt(nu_sig2));    
+    for(m in 1:M){
+        psidiag[m]~ inv_gamma(psi_shape, psi_rate);
+        nu[m] ~ normal(0,sqrt(nu_sig2));    
     }
     
-    for(k in 1:(K-1) ){
-        cond_sd_lambda[k] = sqrt(lam_sig2*psidiag[k+1]);
-        lambday[k] ~ normal(lam_mean,cond_sd_lambda[k]);
+    for(m in 1:(M-1) ){
+        cond_sd_lambda[m] = sqrt(lam_sig2*psidiag[m+1]);
+        lambday[m] ~ normal(lam_mean,cond_sd_lambda[m]);
     }
     
     for(i in 1:N){   
@@ -139,7 +139,7 @@ def mc(data):
 
 # data = {"y": y_data.clone().numpy(),\
 #         "N": y_data.size(0),\
-#         "K": y_data.size(1)}
+#         "M": y_data.size(1)}
 # h = {var:param.item() for var,param in hyper.items()}
 # data.update(h)
 
