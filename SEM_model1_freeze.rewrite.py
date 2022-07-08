@@ -218,6 +218,12 @@ mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Save variables permanently (write to a file or something so I can use for later)
 #Variables I want to save:
+
+#pickle the y_data 
+
+with open('y_datapickle.pickle','wb') as handle:
+    pickle.dump(y_data, handle, protocol = pickle.HIGHEST_PROTOCOL)
+
 #pickle sem_model
 
 with open('sem_modelpickle.pickle','wb') as handle:
@@ -226,6 +232,8 @@ with open('sem_modelpickle.pickle','wb') as handle:
 #pickle mcmc 
 with open('mcmcpickle.pickle', 'wb') as handle: 
     pickle.dump(fit, handle, protocol = pickle.HIGHEST_PROTOCOL)
+
+
 
 # %%
 #Plot Excluding Eta 
