@@ -193,7 +193,7 @@ data.update(h)
 # %%
 #Main Part 2: Do MCMC
 posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples)
+fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85)
 fitp = fit.to_frame() #convert to pandas data frame
 var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
 
@@ -233,8 +233,6 @@ with open('sem_modelpickle.pickle','wb') as handle:
 with open('mcmcpickle.pickle', 'wb') as handle: 
     pickle.dump(fit, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
-
-
 # %%
 #Plot Excluding Eta 
 fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10))#harded coded, not dynamic if we change the size of M
@@ -246,7 +244,7 @@ or_patch = mpatches.Patch(color='orange', label='MCMC app post.')
 blue_patch = mpatches.Patch(color='blue', label='ADVI app post.')
 black_patch = mpatches.Patch(color = 'black', label = "MLE estimate" )
 
-fig.legend(handles=[or_patch, blue_patch, black_patch], loc = 'lower left')
+fig.legend(handles=[or_patch, blue_patch, black_patch], loc = 'lower right')
 
 for v,a in zip(var,ax.flatten()):
     sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
