@@ -223,7 +223,6 @@ with open('hello.pickle','wb') as handle:
     pickle.dump(mydic, handle, protocol = pickle.HIGHEST_PROTOCOL)
 with open('hello.pickle','rb') as handle:
     b = pickle.load(handle)
-print(mydic == b)
 #sem_model.qvar, fit (posterior sample) 
 
 #pickle sem_model
@@ -257,4 +256,4 @@ for v,a in zip(var,ax.flatten()):
 # %%
 #Plot eta for quality assurance properties 
 vbeta = sem_model.qvar['eta']
-ax
+ax[-1].ax
