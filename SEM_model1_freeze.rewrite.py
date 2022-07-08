@@ -210,7 +210,7 @@ coln = ['y1', 'y2', 'y3']
 data = pd.DataFrame(y_data.numpy(), columns = coln) 
 desc = '''eta =~ y1 + y2 + y3'''
 estimates = mle(data = data, desc = desc)
-varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.2', 'psi.3']
+varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.2', 'psi.1', 'psi.3']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Plot Excluding Eta 
@@ -219,13 +219,14 @@ fig.delaxes(ax[4,1])
 fig.suptitle("Estimated Posterior Densities for Non-Latent,  N =" + str(N))
 
 #manually add in legend
-green_patch = mpatches.Patch(color='green', label='MCMC app post.')
+or_patch = mpatches.Patch(color='orange', label='MCMC app post.')
 blue_patch = mpatches.Patch(color='blue', label='ADVI app post.')
-fig.legend(handles=[green_patch, blue_patch], loc = 'lower left')
+black_patch = mpatches.Patch(color = 'black', label = "MLE estimate" )
+
+fig.legend(handles=[or_patch, blue_patch, black_patch], loc = 'lower left')
 
 for v,a in zip(var,ax.flatten()):
-    sns.histplot(data = mcdf[v], ax = a, color = 'green', stat = 'density', kde = True)
-    sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True)
+    sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
+    sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
+    a.axvline(x = mleest[v]) #mle line 
 
-
-fig.save_fig("Test Run with Simulated Data, N=" + str(N) + ", vb_numiter=" + str(iter), ", mcnum_iter= " + str(num_samples))
