@@ -229,9 +229,9 @@ with open('mcmcpickle.pickle', 'wb') as handle:
 
 # %%
 #Plot Excluding Eta 
-fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10)) #harded coded, not dynamic if we change the size of M
+fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10))#harded coded, not dynamic if we change the size of M
 fig.delaxes(ax[4,1])
-fig.suptitle("Estimated Posterior Densities for Non-Latent,  N =" + str(N))
+fig.suptitle("Estimated Posterior Densities for Non Latent,  N =" + str(N))
 
 #manually add in legend
 or_patch = mpatches.Patch(color='orange', label='MCMC app post.')
@@ -245,8 +245,14 @@ for v,a in zip(var,ax.flatten()):
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
     a.axvline(x = mleest[v]) #mle line 
 
+# %%
+#Plot eta for quality assurance properties
+etafig, etaax = plt.subplots(figsize = (5,5)) 
+etafig.suptitle('Scatterplot to check quality of eta approximation for VB')
+vbeta = sem_model.qvar['eta'].var_params[0].detach().numpy()
+etaax.scatter(x = eta.numpy(), y = vbeta)
+etaax.set_xlabel("True Eta")
+etaax.set_ylabel("VB Eta")
+etaax.axline(xy1 = (0,0), slope = 1)
 
 # %%
-#Plot eta for quality assurance properties 
-vbeta = sem_model.qvar['eta']
-ax[-1].ax
