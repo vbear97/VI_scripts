@@ -8,6 +8,8 @@ from torch.distributions import MultivariateNormal as mvn
 #Import semopy package for SEM 
 
 from semopy import Model
+from semopy.means import estimate_means
+from semopy import ModelMeans
 import pandas as pd
 import numpy as np 
 import pandas as pd
@@ -67,5 +69,12 @@ data = pd.DataFrame(y_data.numpy(), columns = coln)
 res = mod.fit(data, obj = "MLW")
 #invoke inspect method of model to analyse parameter estimates 
 estimates = mod.inspect()
+means = estimate_means(mod)
+
+mod2 = ModelMeans(desc)
+mod2.fit(data)
+estimate2=mod2.inspect()
+
 # %%
-#Question - where are the intercepts?
+#Write the function 
+#Accept 
