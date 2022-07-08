@@ -245,6 +245,16 @@ for v,a in zip(var,ax.flatten()):
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
     a.axvline(x = mleest[v]) #mle line 
 
+etafig, etaax = plt.subplots(figsize = (5,5))
+etafig.suptitle("Scatterplot comparing eta means")
+vbeta = sem_model.qvar['eta'].var_params[0].detach().numpy()
+#extract mc eta 
+filter_eta = [col for col in fitp if col.startswith('eta.')]
+mceta = fitp[filter_eta].mean()
+etaax.scatter(x = mceta, y = vbeta)
+etaax.set_xlabel('MCMC Eta Means')
+etaax.set_ylabel('VB Eta Means')
+etaax.axline(xy1 = (0,0), slope = 1)
 # %%
 #Plot eta for quality assurance properties
 etafig, etaax = plt.subplots(figsize = (5,5)) 
