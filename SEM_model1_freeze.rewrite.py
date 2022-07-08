@@ -210,7 +210,7 @@ coln = ['y1', 'y2', 'y3']
 data = pd.DataFrame(y_data.numpy(), columns = coln) 
 desc = '''eta =~ y1 + y2 + y3'''
 estimates = mle(data = data, desc = desc)
-varnmle = ['lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.2', 'psi.3']
+varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.2', 'psi.3']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Plot Excluding Eta 
