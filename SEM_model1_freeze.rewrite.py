@@ -29,6 +29,9 @@ import matplotlib.patches as mpatches
 #for mcmc
 import arviz as az
 
+#for data storage
+import pickle
+
 # %% 
 #User to change: 
 # Set Hyperparameters, True Param Values, Optimization Parameters
@@ -213,6 +216,28 @@ estimates = mle(data = data, desc = desc)
 varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.2', 'psi.1', 'psi.3']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
+#Save variables permanently (write to a file or something so I can use for later)
+#Variables I want to save:
+
+mydic = {1:'one', 2:'two'}
+
+with open('hello.pickle','wb') as handle:
+    pickle.dump(mydic, handle, protocol = pickle.HIGHEST_PROTOCOL)
+with open('hello.pickle','rb') as handle:
+    b = pickle.load(handle)
+print(mydic == b)
+#sem_model.qvar, fit (posterior sample) 
+
+#pickle sem_model
+
+with open('sem_modelpickle.pickle','wb') as handle:
+    pickle.dump(sem_model, handle, protocol = pickle.HIGHEST_PROTOCOL)
+
+#pickle mcmc 
+with open('mcmcpickle.pickle', 'wb') as handle: 
+    pickle.dump(fit, handle, protocol = pickle.HIGHEST_PROTOCOL)
+
+# %%
 #Plot Excluding Eta 
 fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10)) #harded coded, not dynamic if we change the size of M
 fig.delaxes(ax[4,1])
@@ -230,3 +255,6 @@ for v,a in zip(var,ax.flatten()):
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
     a.axvline(x = mleest[v]) #mle line 
 
+
+# %%
+#Plot eta for quality assurance properties 
