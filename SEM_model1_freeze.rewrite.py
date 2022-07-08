@@ -14,6 +14,7 @@ from tqdm import trange
 #My packages
 from sem import *
 from mccode import * 
+from mle import *
 
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
@@ -191,14 +192,11 @@ data.update(h)
 posterior = mc(data)
 fit = posterior.sample(num_chains = 4, num_warmup = 1000, num_samples = 10000)
 fitp = fit.to_frame() #convert to pandas data frame
-
-# %%
-#Comparative Visualisation: Non -Eta Variables 
-#Make var string ##optimise later 
-var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order: nu, lam, psi,sig2
+var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
 
 #Sample MC data excluding eta--> pd.df
 mcdf = fitp[var]
+# %%
 
 #Sample VB data excluding eta ---< pd.df
 num_sample = torch.tensor([10000])
@@ -206,8 +204,17 @@ vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detac
 vbdf = pd.DataFrame(vb_sample, columns = var)
 
 # %%
+#MLE Estimation: not adjusted for dynamic M 
+#Make y_data into a pandas dataframe
+coln = ['y1', 'y2', 'y3']
+data = pd.DataFrame(y_data.numpy(), columns = coln) 
+desc = '''eta =~ y1 + y2 + y3'''
+estimates = mle(data = data, desc = desc)
+varnmle = ['lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.2', 'psi.3']
+mleest= dict(zip(varnmle, estimates['Estimate']))
+# %%
 #Plot Excluding Eta 
-fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10)) 
+fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10)) #harded coded, not dynamic if we change the size of M
 fig.delaxes(ax[4,1])
 fig.suptitle("Estimated Posterior Densities for Non-Latent,  N =" + str(N))
 
@@ -219,4 +226,6 @@ fig.legend(handles=[green_patch, blue_patch], loc = 'lower left')
 for v,a in zip(var,ax.flatten()):
     sns.histplot(data = mcdf[v], ax = a, color = 'green', stat = 'density', kde = True)
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True)
+
+
 fig.save_fig("Test Run with Simulated Data, N=" + str(N) + ", vb_numiter=" + str(iter), ", mcnum_iter= " + str(num_samples))
