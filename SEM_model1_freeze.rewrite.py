@@ -219,8 +219,6 @@ mleest= dict(zip(varnmle, estimates['Estimate']))
 #Save variables permanently (write to a file or something so I can use for later)
 #Variables I want to save:
 
-mydic = {1:'one', 2:'two'}
-
 with open('hello.pickle','wb') as handle:
     pickle.dump(mydic, handle, protocol = pickle.HIGHEST_PROTOCOL)
 with open('hello.pickle','rb') as handle:
@@ -258,3 +256,5 @@ for v,a in zip(var,ax.flatten()):
 
 # %%
 #Plot eta for quality assurance properties 
+vbeta = sem_model.qvar['eta']
+ax
