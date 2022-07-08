@@ -205,6 +205,7 @@ num_sample = torch.tensor([10000])
 vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
 vbdf = pd.DataFrame(vb_sample, columns = var)
 
+# %%
 #Plot Excluding Eta 
 fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10)) 
 fig.delaxes(ax[4,1])
