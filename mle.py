@@ -82,5 +82,6 @@ def mle(data, desc):
     #data = pandas dataframe of y1, y2, ...ym labelled
     #desc = model description
     mod = ModelMeans(desc)
+    mod.fit(data)
     estimates = mod.inspect()
     return estimates 
