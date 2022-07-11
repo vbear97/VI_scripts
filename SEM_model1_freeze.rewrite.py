@@ -201,6 +201,11 @@ var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig
 mcdf = fitp[var]
 # %%
 #MCMC Chain Diagnostics 
+#Extract chains from mcdf 
+#Know that it is scrambled: really fucking annoying 
+#(1,2,3,4)
+
+
 
 
 
