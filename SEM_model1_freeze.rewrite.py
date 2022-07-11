@@ -200,6 +200,11 @@ var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig
 #Sample MC data excluding eta--> pd.df
 mcdf = fitp[var]
 # %%
+#MCMC Chain Diagnostics 
+
+
+
+# %%
 
 #Sample VB data excluding eta ---< pd.df
 num_sample = torch.tensor([10000])
