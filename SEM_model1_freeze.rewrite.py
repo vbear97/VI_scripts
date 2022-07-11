@@ -28,6 +28,7 @@ import matplotlib.patches as mpatches
 
 #for mcmc
 import arviz as az
+import pystan
 
 #for data storage
 import pickle
