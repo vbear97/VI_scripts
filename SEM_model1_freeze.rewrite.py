@@ -205,7 +205,16 @@ mcdf = fitp[var]
 #Know that it is scrambled: really fucking annoying 
 #(1,2,3,4)
 
+#Append Chain Record Number 
+chaincat= list(range(num_chains))
+chainrec = chaincat* num_samples
 
+mcdf.assign(chainrec)
+
+#Analyse Chain Trace Plots 
+
+
+#Look at R_hat values 
 
 
 
