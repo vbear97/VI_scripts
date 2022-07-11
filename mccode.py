@@ -132,7 +132,7 @@ def mc(data):
     }
         """
     #Build posterior 
-    posterior = stan.build(mccode, data) 
+    posterior = pystan.StanModel(model_code = mccode) 
     return posterior
 # %%
 def mc2(data):
@@ -195,7 +195,7 @@ def mc2(data):
     }
         """
     #Build posterior 
-    posterior = stan.build(mccode, data)
+    model = stan.build(mccode, data)
     #fit = posterior.sample(num_chains = num_chains, num_samples = num_samples) #do MCMC for default number of iterations, 
     #df = fit.to_frame()
     return posterior
