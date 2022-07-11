@@ -50,8 +50,8 @@ nu_sig2 = torch.tensor([10.0])
 nu_mean = torch.tensor([0.0])
 
 #lam_j | psi_j ~ id Normal(mu, sig2*psi_j)
-lam_mean = torch.tensor([1.0])
-lam_sig2 = torch.tensor([10.0])
+lam_mean = torch.tensor([0.0])
+lam_sig2 = torch.tensor([1.0])
 
 #Set True Values for Parameters 
 N = 301
@@ -213,7 +213,7 @@ coln = ['y1', 'y2', 'y3']
 data = pd.DataFrame(y_data.numpy(), columns = coln) 
 desc = '''eta =~ y1 + y2 + y3'''
 estimates = mle(data = data, desc = desc)
-varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.2', 'psi.1', 'psi.3']
+varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.3', 'psi.1', 'psi.2']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Save variables permanently (write to a file or something so I can use for later)
