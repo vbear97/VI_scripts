@@ -193,13 +193,19 @@ h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
 # %%
 #Main Part 2: Do MCMC
-posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85)
-fitp = fit.to_frame() #convert to pandas data frame
-var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
+# posterior = mc(data)
+# fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85)
+# fitp = fit.to_frame() #convert to pandas data frame
+# var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
 
 #Sample MC data excluding eta--> pd.df
-mcdf = fitp[var]
+# mcdf = fitp[var]
+# %%
+#Main Part: Do MCMC via Pystan 
+posterior = mc(data)
+fit = posterior.sampling(chains = 4, iter = 10000, warmup = 100)
+
+
 # %%
 
 #Sample VB data excluding eta ---< pd.df
