@@ -10,7 +10,7 @@ from tqdm import trange
 #import relevant mcmcpystan packages 
 import nest_asyncio
 nest_asyncio.apply()
-import stan
+import pystan
 import arviz as az
 
 #import relevant packages
