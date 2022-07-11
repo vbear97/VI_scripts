@@ -38,8 +38,8 @@ import pickle
 
 #Set Hyper-parameters 
 #sig_2 ~ InvGamma
-sig2_shape = torch.tensor([1.0])  
-sig2_rate = torch.tensor([1.0])  
+sig2_shape = torch.tensor([0.5])  
+sig2_rate = torch.tensor([0.5])  
 
 #psi ~ iid Inv Gamma for j = 1..m 
 psi_shape = torch.tensor([0.5])  
