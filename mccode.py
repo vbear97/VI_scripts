@@ -22,20 +22,20 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # %%
-sig2_shape = torch.tensor([1.0])  
-sig2_rate = torch.tensor([1.0])  
+sig2_shape = torch.tensor([0.5])  
+sig2_rate = torch.tensor([0.5])  
 
 #psi ~ iid Inv Gamma for j = 1..m 
-psi_shape = torch.tensor([1.0])  
-psi_rate = torch.tensor([1.0])  
+psi_shape = torch.tensor([0.5])  
+psi_rate = torch.tensor([0.005])  
 
 #nu ~ iid Normal for j = 1...m
-nu_sig2 = torch.tensor([10.0])  
+nu_sig2 = torch.tensor([100.0])  
 nu_mean = torch.tensor([0.0])
 
 #lam_j | psi_j ~ id Normal(mu, sig2*psi_j)
-lam_mean = torch.tensor([1.0])
-lam_sig2 = torch.tensor([10.0])
+lam_mean = torch.tensor([0.0])
+lam_sig2 = torch.tensor([1.0])
 
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
 
