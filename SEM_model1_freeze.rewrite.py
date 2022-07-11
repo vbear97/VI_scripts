@@ -46,7 +46,7 @@ psi_shape = torch.tensor([1.0])
 psi_rate = torch.tensor([1.0])  
 
 #nu ~ iid Normal for j = 1...m
-nu_sig2 = torch.tensor([10.0])  
+nu_sig2 = torch.tensor([100.0])  
 nu_mean = torch.tensor([0.0])
 
 #lam_j | psi_j ~ id Normal(mu, sig2*psi_j)
