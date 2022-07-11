@@ -78,7 +78,7 @@ num_chains = 4
 num_warmup = 7500
 num_samples = 15000
 
-lr_nl= 0.01
+lr_nl= 0.001
 lr_ps= 0.01
 lr_eta = 0.01
 #psi and sigma are very slow to converge 
@@ -249,7 +249,7 @@ fig.legend(handles=[or_patch, blue_patch, black_patch], loc = 'lower right')
 for v,a in zip(var,ax.flatten()):
     sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
-    a.axvline(x = mleest[v]) #mle line 
+    a.axvline(x = mleest[v],  color = 'black') #mle line 
 
 etafig, etaax = plt.subplots(figsize = (5,5))
 etafig.suptitle("Scatterplot comparing eta means")
