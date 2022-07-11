@@ -42,8 +42,8 @@ sig2_shape = torch.tensor([1.0])
 sig2_rate = torch.tensor([1.0])  
 
 #psi ~ iid Inv Gamma for j = 1..m 
-psi_shape = torch.tensor([1.0])  
-psi_rate = torch.tensor([1.0])  
+psi_shape = torch.tensor([0.5])  
+psi_rate = torch.tensor([0.005])  
 
 #nu ~ iid Normal for j = 1...m
 nu_sig2 = torch.tensor([100.0])  
