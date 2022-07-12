@@ -191,10 +191,18 @@ data = {"y": y_data.clone().numpy(),\
 h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
 # %%
+#Initialise dispersed starting values for chains to maximise chance of detecting evidence of non-convergence 
+
+chain1init={'lam': [0,0]}
+chain2init={'lam': [1,1]}
+chain3init={'lam': [-1, -1]}
+chain4init={'lam': [0.5, 0.5]}
+init = [chain1init, chain2init, chain3init, chain4init]
+#Not very efficient, make more flexible later
 
 #Main Part 2: Do MCMC
 posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85)
+fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85, init = init)
 fitp = fit.to_frame() #convert to pandas data frame
 var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
 
@@ -208,6 +216,7 @@ diag = az.summary(fit) #look at r_hat statistics
 rhat_max = diag['r_hat'].max() #pass if <= 1.01 
 #trace plots 
 az.plot_trace(data = fit, var_names = ['~eta', '~eta_norm', '~sigma'], combined = False, compact = False)
+az.bfmi(fit)
 #Personally I find it easier just to look at the posterior histograms to see if they are all overlapping 
 
 #Divergence, Tree Depth, E-BFMI ---> to do with model configuration, so not relevant 
