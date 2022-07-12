@@ -74,7 +74,11 @@ writer = SummaryWriter("test")
 #Import Holzinger and Swineford data
 
 from semopy.examples import holzinger39
-hdata = holzinger39.get_data
+hdata = holzinger39.get_data()
+#want only visual p,cubes, lozenges test, in that order
+#hdata is a pandas dataframe
+y_data = hdata[['x1', 'x2','x3']]
+#but how to verify this is actually the desired data? I don't see any documentation for this. 
 
 # %% 
 #Simulate y_data
@@ -247,7 +251,7 @@ coln = ['y1', 'y2', 'y3']
 data = pd.DataFrame(y_data.numpy(), columns = coln) 
 desc = '''eta =~ y1 + y2 + y3'''
 estimates = mle(data = data, desc = desc)
-varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.3', 'psi.1', 'psi.2']
+varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.3', 'psi.2']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Save variables permanently (write to a file or something so I can use for later)
