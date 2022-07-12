@@ -51,6 +51,8 @@ nu_mean = torch.tensor([0.0])
 lam_mean = torch.tensor([0.0])
 lam_sig2 = torch.tensor([1.0])
 
+#Fix degenerates
+degenerate = {}
 #Concatenate
 hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
 
