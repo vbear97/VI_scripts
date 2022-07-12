@@ -77,8 +77,10 @@ from semopy.examples import holzinger39
 hdata = holzinger39.get_data()
 #want only visual p,cubes, lozenges test, in that order
 #hdata is a pandas dataframe
-y_data = hdata[['x1', 'x2','x3']]
+myhdata = hdata[['x1', 'x2','x3']]
+y_data = torch.tensor(myhdata.values, requires_grad=False)
 #but how to verify this is actually the desired data? I don't see any documentation for this. 
+#now convert to torch tensor
 
 # %% 
 #Simulate y_data
