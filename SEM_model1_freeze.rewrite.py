@@ -32,10 +32,8 @@ import arviz as az
 #for data storage
 import pickle
 
-# %% 
-#User to change: 
-# Set Hyperparameters, True Param Values, Optimization Parameters
-
+# %%
+#User to change: Hyperparameters, Optimization Parameters
 #Set Hyper-parameters 
 #sig_2 ~ InvGamma
 sig2_shape = torch.tensor([0.5])  
@@ -53,20 +51,8 @@ nu_mean = torch.tensor([0.0])
 lam_mean = torch.tensor([0.0])
 lam_sig2 = torch.tensor([1.0])
 
-#Set True Values for Parameters 
-N = 301
-M = 3
-nu = torch.tensor([5.0, 10.0, 2.0])
-sig = torch.tensor([1.2])
-sig2= torch.square(sig)
-lam = torch.tensor([0.8, 0.5])
-psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
-psi = torch.square(psi_sqrt)
-
-#Generate Latent Variables
-eta = torch.randn(N)*sig
-lam1 = torch.tensor([1.0])
-lam_full= torch.cat((lam1, lam))
+#Concatenate
+hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
 
 #Set Optim Params
 iter = 100000
@@ -84,14 +70,27 @@ lr_eta = 0.01
 #psi and sigma are very slow to converge 
 
 writer = SummaryWriter("test")
+# %% 
+#Simulate y_data
+
+#Set True Values for Parameters 
+N = 301
+M = 3
+nu = torch.tensor([5.0, 10.0, 2.0])
+sig = torch.tensor([1.2])
+sig2= torch.square(sig)
+lam = torch.tensor([0.8, 0.5])
+psi_sqrt = torch.tensor([3.1, 2.2, 1.1])
+psi = torch.square(psi_sqrt)
+
+#Generate Latent Variables
+eta = torch.randn(N)*sig
+lam1 = torch.tensor([1.0])
+lam_full= torch.cat((lam1, lam))
 
 #Fix degenerates
 degenerate = {} #degenerate lam is 2 dimensional
 
-#Concatenate
-hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shape, "psi_rate": psi_rate, "nu_sig2": nu_sig2, "nu_mean": nu_mean, "lam_mean": lam_mean, "lam_sig2": lam_sig2}
-
-# %%
 #Generate y values based on User Input
 # yi ~ id Normal(nu + eta_i * lam, diag(psi)), yi /in R^m
 #cov:
