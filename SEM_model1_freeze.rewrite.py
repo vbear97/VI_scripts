@@ -191,6 +191,7 @@ data = {"y": y_data.clone().numpy(),\
 h = {var:param.item() for var,param in hyper.items()}
 data.update(h)
 # %%
+
 #Main Part 2: Do MCMC
 posterior = mc(data)
 fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85)
@@ -201,22 +202,22 @@ var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig
 mcdf = fitp[var]
 # %%
 #MCMC Chain Diagnostics 
-#Extract chains from mcdf 
-#Know that it is scrambled: really fucking annoying 
-#(1,2,3,4)
+#Use Arviz Package 
 
-#Append Chain Record Number 
-chaincat= list(range(num_chains))
-chainrec = chaincat* num_samples
+diag = az.summary(fit) #look at r_hat statistics
+rhat_max = diag['r_hat'].max() #pass if <= 1.01 
+#trace plots 
+az.plot_trace(data = fit, var_names = ['~eta', '~eta_norm', '~sigma'], combined = False, compact = False)
+#Personally I find it easier just to look at the posterior histograms to see if they are all overlapping 
 
-mcdf.assign(chainrec)
+#Divergence, Tree Depth, E-BFMI ---> to do with model configuration, so not relevant 
 
-#Analyse Chain Trace Plots 
+#ESS is to do with efficiency of the sampler --> e.g. jumping distribution. but notice that for HMC the jumping distribution (normal) is fixed, we always accept. so maybe not relevant here?
 
-
-#Look at R_hat values 
-
-
+#az.bfmi(data = fit)
+#az.rhat(data = fit)
+#az.mcse(data = fit)
+#az.ess(data = fit)
 
 # %%
 
