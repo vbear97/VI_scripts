@@ -192,16 +192,16 @@ data.update(h)
 # %%
 #Initialise dispersed starting values for chains to maximise chance of detecting evidence of non-convergence 
 
-chain1init={'lam': [0,0]}
-chain2init={'lam': [1,1]}
-chain3init={'lam': [-1, -1]}
-chain4init={'lam': [0.5, 0.5]}
-init = [chain1init, chain2init, chain3init, chain4init]
+# chain1init={'lam': [0,0]}
+# chain2init={'lam': [1,1]}
+# chain3init={'lam': [-1, -1]}
+# chain4init={'lam': [0.5, 0.5]}
+# init = [chain1init, chain2init, chain3init, chain4init]
 #Not very efficient, make more flexible later
 
 #Main Part 2: Do MCMC
 posterior = mc(data)
-fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85, init = init)
+fit = posterior.sample(num_chains = 4, num_warmup = num_warmup, num_samples = num_samples, delta = 0.85)
 fitp = fit.to_frame() #convert to pandas data frame
 var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
 
