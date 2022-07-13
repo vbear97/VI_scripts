@@ -15,7 +15,7 @@ from tqdm import trange
 from sem import *
 from mccode import * 
 from mle import *
-
+from mfvb import *
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -242,14 +242,37 @@ az.bfmi(fit)
 #az.ess(data = fit)
 
 # %%
+#Main Part 3: MFVB using KD's code 
 
+
+
+# %%
+#Sample ADVI data 
 #Sample VB data excluding eta ---< pd.df
 num_sample = torch.tensor([num_chains * num_samples])
 vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
 vbdf = pd.DataFrame(vb_sample, columns = var)
 
 # %%
-#Results Checking: Is MCMC mean 
+#Results Analysis
+#Test 1: Is MCMC mean close  to VB means?
+
+#Test 1a.
+mcdf.mean()
+vbdf.mean()
+
+#Test 2: MCMC variance vs. VB variances 
+mcdf.var()
+vbdf.var()
+#How to compare sample variances
+#Even if distribution does not have a second moment?
+
+
+#Test 3: Numerical measures of comparison?
+#Test 3.1 KD's Accuracy Measure. 
+#Is that supposed to be squared euclidean distance?
+acc = {}
+
 # %%
 #MLE Estimation: not adjusted for dynamic M 
 #Make y_data into a pandas dataframe
@@ -294,6 +317,7 @@ for v,a in zip(var,ax.flatten()):
     sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
     a.axvline(x = mleest[v],  color = 'black') #mle line 
+    #print out accuracy measure from acc dictionary
 
 etafig, etaax = plt.subplots(figsize = (5,5))
 etafig.suptitle("Scatterplot comparing eta means")

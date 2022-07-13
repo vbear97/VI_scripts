@@ -1,6 +1,7 @@
 #%%
 import rpy2
 import rpy2.robjects as robjects
+import numpy as np
 
 # %%
 #r code for mfvb 
@@ -145,6 +146,7 @@ MFVBoutput <- MFVBforSEM(y,n,m,mu.lambda,sigsq.lambda,sigsq.nu,delta.psi,
 
 # %%
 def doMFVB():
-    mfvb = robjects.r(mfvbcode)
+    rmfvb = robjects.r(mfvbcode)
+    mfvb= {key: np.array(rmfvb.rx2(key))for key in mfvb.names}
+    #recast mfvb into something good
     return mfvb
-# %%
