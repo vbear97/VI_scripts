@@ -1,7 +1,13 @@
 #%%
+from statistics import covariance
 import rpy2
 import rpy2.robjects as robjects
 import numpy as np
+
+from sem import InverseGamma
+import torch
+from torch.distributions import Normal
+from torch.distributions import MultivariateNormal as mvn
 
 # %%
 #r code for mfvb 
@@ -147,6 +153,13 @@ MFVBoutput <- MFVBforSEM(y,n,m,mu.lambda,sigsq.lambda,sigsq.nu,delta.psi,
 # %%
 def doMFVB():
     rmfvb = robjects.r(mfvbcode)
-    mfvb= {key: np.array(rmfvb.rx2(key))for key in mfvb.names}
-    #recast mfvb into something good
+    mfvb= {key: torch.from_numpy(np.array(rmfvb.rx2(key)))for key in mfvb.names}
+    #clean up - disgusting 
+    nu_dist = mvn(mfvb['mu.q.nu.MFVB'], covariance_matrix = torch.diag(mfvb['sigsq.q.nu.MFVB']))
+    lam_dist = mvn(mfvb['sigsq.q.lambda.MFVB'], covariance_matrix = torch.diag(mfvb['sigsq.q.lambda.MFVB'])) 
+    sig2_dist = InverseGamma(concentration= mfvb['kappa.q.sigsq.MFVB']/2, rate = mfvb['delta.q.sigsq.MFVB']/2)
+    psi_dist = InverseGamma(concentration = mfvb['kappa.q.psi.MFVB']/2, rate = mfvb['delta.q.psi.MFVB']/2)
+
+    mfvb = {'nu': nu_dist, 'lam': lam_dist, 'psi': psi_dist, 'lam': lam_dist}
+
     return mfvb
