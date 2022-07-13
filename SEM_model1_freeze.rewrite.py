@@ -316,3 +316,7 @@ etaax.set_ylabel("VB Eta")
 etaax.axline(xy1 = (0,0), slope = 1)
 
 # %%
+#to open previous pickle data
+filename = "advi13071hpickle.pickle"
+read = "rb"
+sempickle = open(filename, read)
