@@ -159,7 +159,5 @@ def doMFVB():
     lam_dist = mvn(mfvb['sigsq.q.lambda.MFVB'], covariance_matrix = torch.diag(mfvb['sigsq.q.lambda.MFVB'])) 
     sig2_dist = InverseGamma(concentration= mfvb['kappa.q.sigsq.MFVB']/2, rate = mfvb['delta.q.sigsq.MFVB']/2)
     psi_dist = InverseGamma(concentration = mfvb['kappa.q.psi.MFVB']/2, rate = mfvb['delta.q.psi.MFVB']/2)
-
     mfvb = {'nu': nu_dist, 'lam': lam_dist, 'psi': psi_dist, 'lam': lam_dist}
-
     return mfvb
