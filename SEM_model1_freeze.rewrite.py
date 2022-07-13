@@ -243,8 +243,11 @@ az.bfmi(fit)
 
 # %%
 #Main Part 3: MFVB using KD's code 
-
-
+mfvb = doMFVB()
+#Returns dictionary with torch.distributions 
+num_sample = torch.tensor([num_chains*num_samples])
+mfvb_sample = np.concatenate([mfvb[key].rsample(num_sample).detach().numpy() for key in mfvb], axis = 1)
+mfdf = pd.DataFrame(mfvb_sample, columns = var)
 
 # %%
 #Sample ADVI data 
@@ -316,8 +319,8 @@ fig.legend(handles=[or_patch, blue_patch, black_patch], loc = 'lower right')
 for v,a in zip(var,ax.flatten()):
     sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
     sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
+    sns.histplot(data = mfdf[v], ax = a, bins = 100, color = 'green', kde = True) #mfvb density
     a.axvline(x = mleest[v],  color = 'black') #mle line 
-    #print out accuracy measure from acc dictionary
 
 etafig, etaax = plt.subplots(figsize = (5,5))
 etafig.suptitle("Scatterplot comparing eta means")
