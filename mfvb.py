@@ -1,5 +1,4 @@
 #%%
-from statistics import covariance
 import rpy2
 import rpy2.robjects as robjects
 import numpy as np
@@ -153,11 +152,13 @@ MFVBoutput <- MFVBforSEM(y,n,m,mu.lambda,sigsq.lambda,sigsq.nu,delta.psi,
 # %%
 def doMFVB():
     rmfvb = robjects.r(mfvbcode)
-    mfvb= {key: torch.from_numpy(np.array(rmfvb.rx2(key)))for key in mfvb.names}
+    mfvb= {key: torch.from_numpy(np.array(rmfvb.rx2(key)))for key in rmfvb.names}
     #clean up - disgusting 
     nu_dist = mvn(mfvb['mu.q.nu.MFVB'], covariance_matrix = torch.diag(mfvb['sigsq.q.nu.MFVB']))
     lam_dist = mvn(mfvb['sigsq.q.lambda.MFVB'], covariance_matrix = torch.diag(mfvb['sigsq.q.lambda.MFVB'])) 
     sig2_dist = InverseGamma(concentration= mfvb['kappa.q.sigsq.MFVB']/2, rate = mfvb['delta.q.sigsq.MFVB']/2)
     psi_dist = InverseGamma(concentration = mfvb['kappa.q.psi.MFVB']/2, rate = mfvb['delta.q.psi.MFVB']/2)
     mfvb_dist = {'nu': nu_dist, 'lam': lam_dist, 'psi': psi_dist, 'sig2': sig2_dist}
-    return mfvb_dist
+    return (mfvb_dist)
+
+# %%
