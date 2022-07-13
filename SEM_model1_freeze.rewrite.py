@@ -279,7 +279,7 @@ with open('mcmc1307h1pickle.pickle', 'wb') as handle:
 #Plot Excluding Eta 
 fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10))#harded coded, not dynamic if we change the size of M
 fig.delaxes(ax[4,1])
-fig.suptitle("Estimated Posterior Densities for Non Latent,  N =" + str(N))
+fig.suptitle("Estimated Posterior Densities conditional on Holzinger'39 Data")
 
 #manually add in legend
 or_patch = mpatches.Patch(color='orange', label='MCMC app post.')
