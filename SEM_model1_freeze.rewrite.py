@@ -244,10 +244,12 @@ az.bfmi(fit)
 # %%
 
 #Sample VB data excluding eta ---< pd.df
-num_sample = torch.tensor([10000])
+num_sample = torch.tensor([num_chains * num_samples])
 vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
 vbdf = pd.DataFrame(vb_sample, columns = var)
 
+# %%
+#Results Checking: Is MCMC mean 
 # %%
 #MLE Estimation: not adjusted for dynamic M 
 #Make y_data into a pandas dataframe
