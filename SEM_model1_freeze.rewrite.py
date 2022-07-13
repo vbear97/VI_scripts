@@ -268,11 +268,11 @@ with open('y_datapickle.pickle','wb') as handle:
 
 #pickle sem_model
 
-with open('sem_modelpickle.pickle','wb') as handle:
+with open('advi13071hpickle.pickle','wb') as handle:
     pickle.dump(sem_model, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
 #pickle mcmc 
-with open('mcmcpickle.pickle', 'wb') as handle: 
+with open('mcmc1307h1pickle.pickle', 'wb') as handle: 
     pickle.dump(fit, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
 # %%
