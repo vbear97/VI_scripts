@@ -148,7 +148,7 @@ for t in iters:
     loss.backward()
     optimizer.step()
 
-    scheduler.step()
+    scheduler.step(loss.clone().detach())
 
     # print("psi_grad", sem_model.qvar['psi'].var_params.grad)
 
