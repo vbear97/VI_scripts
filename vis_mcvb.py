@@ -47,7 +47,7 @@ def plot_etameans(vbeta, mceta, ylabel = 'VB Eta Means', figsize = (5,5)):
     ax.set_ylabel(ylabel)
     ax.axline(xy1 = (0,0), slope = 1)
 # %%
-def plot_credint(data, q1 = 0.0275, q2 = 0.975, figsize = (10,10), title = 'Credible Intervals'):
+def plot_credint(data, q1 = 0.0275, q2 = 0.975, figsize = (10,10), title = 'Comparison of Credible Intervals for Estimated Posterior Densities'):
         '''
         data = {'MCMC': [mcdf, 'color' form}
         '''
@@ -72,13 +72,19 @@ def plot_credint(data, q1 = 0.0275, q2 = 0.975, figsize = (10,10), title = 'Cred
                 color = data[key][1]
                 a.plot(quantiles[key][0][v], (y,y), color = color, linewidth = 10, alpha = 0.5)
                 #plot mean
-                a.plot(x = quantiles[key][1][v], y = y, color = color, marker = 'o')
-
+                a.plot(quantiles[key][1][v], y, color = 'black', marker = 'o')
             #then, plot mcmc mean as a reference line 
-            a.axvline(x = quantiles['MCMC'][v], color = 'red', ls = '--')
+            a.axvline(quantiles['MCMC'][1][v], color = 'red', ls = '--')
+
+            #title, cosmetic issues
+            a.set_title(label = v)
+            a.yaxis.set_visible(False)
+
+            #xaxis tick marks
+            
 # %%
    # writer.add_scalars("eta", \
-    #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
+    #                    {'eta1_mean': tesem_model.qvar['eta'].var_params[0][0].item(),\
     #                     'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
     #                     'eta1_true': eta[0].item(),\
     #                     'eta50_mean': sem_model.qvar['eta'].var_params[0][50].item(),\
