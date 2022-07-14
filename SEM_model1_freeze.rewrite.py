@@ -16,6 +16,7 @@ from sem import *
 from mccode import * 
 from mle import *
 from mfvb import *
+from vis_mcvb import *
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -165,36 +166,6 @@ for t in iters:
                     'sig2_alpha': sem_model.qvar['sig2'].var_params[0].exp().item(),\
                     'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
                         }, global_step = t)
-
-    # writer.add_scalars("eta", \
-    #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
-    #                     'eta1_sig': sem_model.qvar['eta'].var_params[1][0].exp().item(),\
-    #                     'eta1_true': eta[0].item(),\
-    #                     'eta50_mean': sem_model.qvar['eta'].var_params[0][50].item(),\
-    #                     'eta50_sig': sem_model.qvar['eta'].var_params[1][50].exp().item(),\
-    #                     'eta50_true': eta[50].item(),\
-    #                     'eta100_mean': sem_model.qvar['eta'].var_params[0][99].item(),\
-    #                     'eta100_sig': sem_model.qvar['eta'].var_params[1][99].exp().item(),\
-    #                     'eta100_true': eta[99].item(),\
-    #                     'eta200_mean': sem_model.qvar['eta'].var_params[0][200].item(),\
-    #                     'eta200_sig': sem_model.qvar['eta'].var_params[1][200].exp().item(),\
-    #                     'eta200_true': eta[200].item(),\
-    #                     'eta300_mean': sem_model.qvar['eta'].var_params[0][300].item(),\
-    #                     'eta300_sig': sem_model.qvar['eta'].var_params[1][300].exp().item(),\
-    #                     'eta300_true': eta[300].item(),\
-    #                     'eta400_mean': sem_model.qvar['eta'].var_params[0][400].item(),\
-    #                     'eta400_sig': sem_model.qvar['eta'].var_params[1][400].exp().item(),\
-    #                     'eta400_true': eta[400].item(),\
-    #                     'eta500_mean': sem_model.qvar['eta'].var_params[0][500].item(),\
-    #                     'eta500_sig': sem_model.qvar['eta'].var_params[1][500].exp().item(),\
-    #                     'eta500_true': eta[500].item(),\
-    #                     'eta600_mean': sem_model.qvar['eta'].var_params[0][600].item(),\
-    #                     'eta600_sig': sem_model.qvar['eta'].var_params[1][600].exp().item(),\
-    #                     'eta600_true': eta[600].item(),\
-    #                     'eta750_mean': sem_model.qvar['eta'].var_params[0][750].item(),\
-    #                     'eta750_sig': sem_model.qvar['eta'].var_params[1][750].exp().item(),\
-    #                     'eta750_true': eta[750].item(),\
-    #                     }, global_step = t)
 # %%
 #Sample VB data excluding eta ---< pd.df
 var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
@@ -244,7 +215,7 @@ coln = ['y1', 'y2', 'y3']
 data = pd.DataFrame(y_data.numpy(), columns = coln) 
 desc = '''eta =~ y1 + y2 + y3'''
 estimates = mle(data = data, desc = desc)
-varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.3', 'psi.2', 'psi.1']
+varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.2', 'psi.3']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Save variables permanently (write to a file or something so I can use for later)
@@ -264,7 +235,23 @@ with open('mcmc1407h1pickle.pickle', 'wb') as handle:
     pickle.dump(fit, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
 # %%
-#Plot Excluding Eta 
+#Comparison Plots
+
+#1. Plot Densities 
+data = {'MCMC': [mcdf, 'orange'],  'MFVB': [mfdf, 'green'], 'ADVI': [vbdf, 'blue']}
+plot_dens(data = data, mle = mleest)
+
+#2. Plot Eta
+vbeta = sem_model.qvar['eta'].var_params[0].detach().numpy()
+#extract mc eta 
+filter_eta = [col for col in fitp if col.startswith('eta.')]
+mceta = fitp[filter_eta].mean()
+plot_etameans(vbeta = vbeta, mceta = mceta)
+
+#3. Credible Intervals 
+
+# %%
+#Comparison Plots 
 fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10))#harded coded, not dynamic if we change the size of M
 fig.delaxes(ax[4,1])
 fig.suptitle("Estimated Posterior Densities conditional on Holzinger'39 Data")
@@ -283,18 +270,7 @@ for v,a in zip(var,ax.flatten()):
     # sns.histplot(data = mfdf[v], ax = a, bins = 100, color = 'green', stat = 'density', kde = True) #mfvb density
     # a.axvline(x = mleest[v],  color = 'black') #mle line 
 
-    # sns.kdeplot(data = mcdf[v], ax = a, color = 'orange')
+    sns.kdeplot(data = mcdf[v], ax = a, color = 'orange')
     sns.kdeplot(data = vbdf[v], ax = a, color = 'blue')
     sns.kdeplot(data= mfdf[v], ax = a,  color = 'green')
     a.axvline(x = mleest[v], color = 'black')
-
-etafig, etaax = plt.subplots(figsize = (5,5))
-etafig.suptitle("Scatterplot comparing eta means")
-vbeta = sem_model.qvar['eta'].var_params[0].detach().numpy()
-#extract mc eta 
-filter_eta = [col for col in fitp if col.startswith('eta.')]
-mceta = fitp[filter_eta].mean()
-etaax.scatter(x = mceta, y = vbeta)
-etaax.set_xlabel('MCMC Eta Means')
-etaax.set_ylabel('VB Eta Means')
-etaax.axline(xy1 = (0,0), slope = 1)
