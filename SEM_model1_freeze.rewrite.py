@@ -240,18 +240,6 @@ vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detac
 vbdf = pd.DataFrame(vb_sample, columns = var)
 
 # %%
-#Results Analysis
-#Test 1: Is MCMC mean close  to VB means?
-
-#Test 1a.
-mcdf.mean()
-vbdf.mean()
-
-#Test 2: MCMC variance vs. VB variances 
-mcdf.var()
-vbdf.var()
-
-# %%
 #MLE Estimation: not adjusted for dynamic M 
 #Make y_data into a pandas dataframe
 coln = ['y1', 'y2', 'y3']
@@ -263,7 +251,6 @@ mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Save variables permanently (write to a file or something so I can use for later)
 #Variables I want to save:
-
 #pickle the y_data 
 
 with open('y_datapickle.pickle','wb') as handle:
