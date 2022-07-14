@@ -224,6 +224,7 @@ az.bfmi(fit)
 
 # %%
 #Main Part 3: MFVB using KD's code 
+var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']  #hard coded order, not efficient: nu, lam, psi,sig2
 mfvb = doMFVB()
 #Returns dictionary with torch.distributions 
 num_sample = torch.tensor([num_chains*num_samples])
@@ -233,6 +234,7 @@ mfdf = pd.DataFrame(mfvb_sample, columns = var)
 # %%
 #Sample ADVI data 
 #Sample VB data excluding eta ---< pd.df
+var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
 num_sample = torch.tensor([num_chains * num_samples])
 vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
 vbdf = pd.DataFrame(vb_sample, columns = var)
@@ -256,7 +258,7 @@ coln = ['y1', 'y2', 'y3']
 data = pd.DataFrame(y_data.numpy(), columns = coln) 
 desc = '''eta =~ y1 + y2 + y3'''
 estimates = mle(data = data, desc = desc)
-varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.1', 'psi.3', 'psi.2']
+varnmle = ['lam_fixed','lam.1', 'lam.2','nu.1', 'nu.2', 'nu.3','sig2', 'psi.3', 'psi.2', 'psi.1']
 mleest= dict(zip(varnmle, estimates['Estimate']))
 # %%
 #Save variables permanently (write to a file or something so I can use for later)
@@ -269,11 +271,11 @@ with open('y_datapickle.pickle','wb') as handle:
 
 #pickle sem_model
 
-with open('advi13071hpickle.pickle','wb') as handle:
+with open('advi14071hpickle.pickle','wb') as handle:
     pickle.dump(sem_model, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
 #pickle mcmc 
-with open('mcmc1307h1pickle.pickle', 'wb') as handle: 
+with open('mcmc1407h1pickle.pickle', 'wb') as handle: 
     pickle.dump(fit, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
 # %%
@@ -286,14 +288,20 @@ fig.suptitle("Estimated Posterior Densities conditional on Holzinger'39 Data")
 or_patch = mpatches.Patch(color='orange', label='MCMC app post.')
 blue_patch = mpatches.Patch(color='blue', label='ADVI app post.')
 black_patch = mpatches.Patch(color = 'black', label = "MLE estimate" )
+green_patch = mpatches.Patch(color = 'green', label = 'MFVB app post.')
 
-fig.legend(handles=[or_patch, blue_patch, black_patch], loc = 'lower right')
+fig.legend(handles=[or_patch, blue_patch, black_patch, green_patch], loc = 'lower right')
 
 for v,a in zip(var,ax.flatten()):
-    sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
-    sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
-    sns.histplot(data = mfdf[v], ax = a, bins = 100, color = 'green', kde = True) #mfvb density
-    a.axvline(x = mleest[v],  color = 'black') #mle line 
+    # sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
+    # sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
+    # sns.histplot(data = mfdf[v], ax = a, bins = 100, color = 'green', stat = 'density', kde = True) #mfvb density
+    # a.axvline(x = mleest[v],  color = 'black') #mle line 
+
+    # sns.kdeplot(data = mcdf[v], ax = a, color = 'orange')
+    sns.kdeplot(data = vbdf[v], ax = a, color = 'blue')
+    sns.kdeplot(data= mfdf[v], ax = a,  color = 'green')
+    a.axvline(x = mleest[v], color = 'black')
 
 etafig, etaax = plt.subplots(figsize = (5,5))
 etafig.suptitle("Scatterplot comparing eta means")
@@ -314,9 +322,3 @@ etaax.scatter(x = eta.numpy(), y = vbeta)
 etaax.set_xlabel("True Eta")
 etaax.set_ylabel("VB Eta")
 etaax.axline(xy1 = (0,0), slope = 1)
-
-# %%
-#to open previous pickle data
-filename = "advi13071hpickle.pickle"
-read = "rb"
-sempickle = open(filename, read)
