@@ -196,6 +196,12 @@ for t in iters:
     #                     'eta750_true': eta[750].item(),\
     #                     }, global_step = t)
 # %%
+#Sample VB data excluding eta ---< pd.df
+var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
+num_sample = torch.tensor([num_chains * num_samples])
+vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
+vbdf = pd.DataFrame(vb_sample, columns = var)
+
 # %%
 #Prepare data for MCMC
 data = {"y": y_data.clone().numpy(),\
@@ -230,14 +236,6 @@ mfvb = doMFVB()
 num_sample = torch.tensor([num_chains*num_samples])
 mfvb_sample = np.concatenate([mfvb[key].rsample(num_sample).detach().numpy() for key in mfvb], axis = 1)
 mfdf = pd.DataFrame(mfvb_sample, columns = var)
-
-# %%
-#Sample ADVI data 
-#Sample VB data excluding eta ---< pd.df
-var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
-num_sample = torch.tensor([num_chains * num_samples])
-vb_sample = np.concatenate([sem_model.qvar[key].dist().rsample(num_sample).detach().numpy() for key in sem_model.qvar if key!= 'eta'], axis = 1)
-vbdf = pd.DataFrame(vb_sample, columns = var)
 
 # %%
 #MLE Estimation: not adjusted for dynamic M 
