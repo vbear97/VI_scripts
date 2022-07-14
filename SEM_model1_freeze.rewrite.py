@@ -249,28 +249,3 @@ mceta = fitp[filter_eta].mean()
 plot_etameans(vbeta = vbeta, mceta = mceta)
 
 #3. Credible Intervals 
-
-# %%
-#Comparison Plots 
-fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = (10,10))#harded coded, not dynamic if we change the size of M
-fig.delaxes(ax[4,1])
-fig.suptitle("Estimated Posterior Densities conditional on Holzinger'39 Data")
-
-#manually add in legend
-or_patch = mpatches.Patch(color='orange', label='MCMC app post.')
-blue_patch = mpatches.Patch(color='blue', label='ADVI app post.')
-black_patch = mpatches.Patch(color = 'black', label = "MLE estimate" )
-green_patch = mpatches.Patch(color = 'green', label = 'MFVB app post.')
-
-fig.legend(handles=[or_patch, blue_patch, black_patch, green_patch], loc = 'lower right')
-
-for v,a in zip(var,ax.flatten()):
-    # sns.histplot(data = mcdf[v], ax = a, color = 'orange', stat = 'density', kde = True) #mcmc density
-    # sns.histplot(data = vbdf[v], ax = a, stat = 'density', color = 'blue', bins = 100, kde = True) #vb density
-    # sns.histplot(data = mfdf[v], ax = a, bins = 100, color = 'green', stat = 'density', kde = True) #mfvb density
-    # a.axvline(x = mleest[v],  color = 'black') #mle line 
-
-    sns.kdeplot(data = mcdf[v], ax = a, color = 'orange')
-    sns.kdeplot(data = vbdf[v], ax = a, color = 'blue')
-    sns.kdeplot(data= mfdf[v], ax = a,  color = 'green')
-    a.axvline(x = mleest[v], color = 'black')
