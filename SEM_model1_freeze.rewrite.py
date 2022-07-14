@@ -62,16 +62,15 @@ hyper = {"sig2_shape": sig2_shape, "sig2_rate": sig2_rate, "psi_shape": psi_shap
 iter = 100000
 iters = trange(iter, mininterval = 1)
 lr = 0.01 
+lr_nl= 0.001
+lr_ps= 0.01
+lr_eta = 0.01
+#psi and sigma are very slow to converge 
 
 #Set MC Params
 num_chains = 4
 num_warmup = 7500
 num_samples = 15000
-
-lr_nl= 0.001
-lr_ps= 0.01
-lr_eta = 0.01
-#psi and sigma are very slow to converge 
 
 writer = SummaryWriter("test")
 # %%
@@ -121,6 +120,8 @@ y_data = mvn(like_dist_means, covariance_matrix= like_dist_cov).rsample() #n*m t
 #Instantiate SEM model
 sem_model = sem_model(y_data = y_data, \
     degenerate= degenerate, hyper= hyper)
+    #need to be able to initialise hyper-parameters of SEM model
+
 # %%
 #Instantiate Optimizer Object with uniform learning rate 
 # optimizer = torch.optim.Adam([sem_model.qvar[key].var_params for key in sem_model.qvar], lr = lr)
@@ -130,6 +131,13 @@ optimizer = torch.optim.Adam([{'params': [sem_model.qvar['nu'].var_params, sem_m
      {'params': [sem_model.qvar['psi'].var_params, sem_model.qvar['sig2'].var_params], 'lr': lr_ps},\
          {'params':[sem_model.qvar['eta'].var_params], 'lr': lr_eta} 
          ])
+
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(\
+    optimizer = optimizer,\
+    mode = 'min',\
+    factor = 0.1,\
+    patience = 100,\
+)
 # %%
 #Main Part 1: ADVI
 for t in iters:
@@ -139,6 +147,8 @@ for t in iters:
     loss = -sem_model.elbo()
     loss.backward()
     optimizer.step()
+
+    scheduler.step()
 
     # print("psi_grad", sem_model.qvar['psi'].var_params.grad)
 
@@ -168,7 +178,7 @@ for t in iters:
                     'sig2_alpha': sem_model.qvar['sig2'].var_params[0].exp().item(),\
                     'sig2_beta': sem_model.qvar['sig2'].var_params[1].exp().item(),\
                         }, global_step = t)
-# %%
+
 #Sample VB data excluding eta ---< pd.df
 var = ['nu.1', 'nu.2', 'nu.3', 'lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
 num_sample = torch.tensor([num_chains * num_samples])
