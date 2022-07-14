@@ -155,7 +155,7 @@ def doMFVB():
     mfvb= {key: torch.from_numpy(np.array(rmfvb.rx2(key)))for key in rmfvb.names}
     #clean up - disgusting 
     nu_dist = mvn(mfvb['mu.q.nu.MFVB'], covariance_matrix = torch.diag(mfvb['sigsq.q.nu.MFVB']))
-    lam_dist = mvn(mfvb['sigsq.q.lambda.MFVB'][1:], covariance_matrix = torch.diag(mfvb['sigsq.q.lambda.MFVB'][1:])) 
+    lam_dist = mvn(mfvb['mu.q.lambda.MFVB'][1:], covariance_matrix = torch.diag(mfvb['sigsq.q.lambda.MFVB'][1:])) 
     sig2_dist = InverseGamma(concentration= mfvb['kappa.q.sigsq.MFVB']/2, rate = mfvb['delta.q.sigsq.MFVB']/2)
     psi_dist = InverseGamma(concentration = mfvb['kappa.q.psi.MFVB']/2, rate = mfvb['delta.q.psi.MFVB']/2)
     mfvb_dist = {'nu': nu_dist, 'lam': lam_dist, 'psi': psi_dist, 'sig2': sig2_dist}
