@@ -17,6 +17,7 @@ from mccode import *
 from mle import *
 from mfvb import *
 from vis_mcvb import *
+
 #Tensorboard 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -144,6 +145,7 @@ for t in iters:
     writer.add_scalar(tag = "training_loss", scalar_value=\
                       loss.item(), global_step = t)
 
+    #clean up: nu and lam tensorboard writing -  concise way please
     writer.add_scalars("nu and lam",{\
                     'nu1_sig': sem_model.qvar['nu'].var_params[1][0].exp().item(),\
                     'nu2_sig': sem_model.qvar['nu'].var_params[1][1].exp().item(), \
@@ -192,7 +194,6 @@ mcdf = fitp[var]
 # %%
 #MCMC Chain Diagnostics 
 #Use Arviz Package 
-
 diag = az.summary(fit) #look at r_hat statistics
 rhat_max = diag['r_hat'].max() #pass if <= 1.01 
 #trace plots 
@@ -249,3 +250,6 @@ mceta = fitp[filter_eta].mean()
 plot_etameans(vbeta = vbeta, mceta = mceta)
 
 #3. Credible Intervals 
+plot_credint(data = data)
+
+# %%
