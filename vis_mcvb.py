@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.patches as mpatches
 # %%
-def plot_dens(data, mle = None, title = 'Estimated Posterior Densities', figsize = (10,10), type = 'kde'):
+def plot_dens(data, mle = None, title = 'Estimated Posterior Densities', figsize = (10,10), yeskde = True):
     var = ['nu.1', 'nu.2', 'nu.3','lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
     #draw figure and axes 
     fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = figsize)#harded coded, not dynamic if we change the size of M
@@ -27,7 +27,7 @@ def plot_dens(data, mle = None, title = 'Estimated Posterior Densities', figsize
     for v,a in zip(var,ax.flatten()):
         if mle is not None:
             a.axvline(x = mle[v], color = 'black')
-        if type == 'kde':
+        if yeskde:
             for key in data:
                 sns.kdeplot(data = data[key][0][v], color = data[key][1], ax = a)
         else:
@@ -46,6 +46,23 @@ def plot_etameans(vbeta, mceta, ylabel = 'VB Eta Means', figsize = (5,5)):
     ax.set_xlabel('MCMC Eta Means')
     ax.set_ylabel(ylabel)
     ax.axline(xy1 = (0,0), slope = 1)
+# %%
+def plot_credint(data, q1 = 0.0275, q2 = 0.975, figsize = (10,10), title = 'Credible Intervals'):
+        fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = figsize)#harded coded, not dynamic if we change the size of M
+        fig.delaxes(ax[4,1])
+        fig.suptitle(title)
+    
+        #autocreate handles for legend
+        handles = [mpatches.Patch(color = data[key][1], label = key + ' Cred Interval.') for key in data]
+        fig.legend(handles= handles, loc = 'lower right')
+
+        #extract quantiles
+        quantiles = {}
+            
+
+
+
+
 # %%
    # writer.add_scalars("eta", \
     #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
