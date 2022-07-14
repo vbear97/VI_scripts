@@ -48,21 +48,34 @@ def plot_etameans(vbeta, mceta, ylabel = 'VB Eta Means', figsize = (5,5)):
     ax.axline(xy1 = (0,0), slope = 1)
 # %%
 def plot_credint(data, q1 = 0.0275, q2 = 0.975, figsize = (10,10), title = 'Credible Intervals'):
+        '''
+        data = {'MCMC': [mcdf, 'color' form}
+        '''
+        var = ['nu.1', 'nu.2', 'nu.3','lam.1', 'lam.2', 'psi.1', 'psi.2', 'psi.3', 'sig2']
         fig, ax = plt.subplots(5,2, constrained_layout = True, figsize = figsize)#harded coded, not dynamic if we change the size of M
         fig.delaxes(ax[4,1])
         fig.suptitle(title)
     
         #autocreate handles for legend
         handles = [mpatches.Patch(color = data[key][1], label = key + ' Cred Interval.') for key in data]
+        handles.append(mpatches.Patch(color = 'red', ls = '--', label = 'MCMC Mean')) #MCMC mean
+
         fig.legend(handles= handles, loc = 'lower right')
 
         #extract quantiles
-        quantiles = {}
-            
+        quantiles = {key: [data[key][0].quantile([q1, q2]), data[key][0].mean()] for key in data}
 
+        #plot as credible intervals
+        for v,a in zip(var,ax.flatten()):
+            for key, y in zip(data, range(len(data))):
+                #plot credible interval
+                color = data[key][1]
+                a.plot(quantiles[key][0][v], (y,y), color = color, linewidth = 10, alpha = 0.5)
+                #plot mean
+                a.plot(x = quantiles[key][1][v], y = y, color = color, marker = 'o')
 
-
-
+            #then, plot mcmc mean as a reference line 
+            a.axvline(x = quantiles['MCMC'][v], color = 'red', ls = '--')
 # %%
    # writer.add_scalars("eta", \
     #                    {'eta1_mean': sem_model.qvar['eta'].var_params[0][0].item(),\
