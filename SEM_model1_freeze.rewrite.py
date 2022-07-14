@@ -313,12 +313,3 @@ etaax.scatter(x = mceta, y = vbeta)
 etaax.set_xlabel('MCMC Eta Means')
 etaax.set_ylabel('VB Eta Means')
 etaax.axline(xy1 = (0,0), slope = 1)
-# %%
-#Plot eta for quality assurance properties
-etafig, etaax = plt.subplots(figsize = (5,5)) 
-etafig.suptitle('Scatterplot to check quality of eta approximation for VB')
-vbeta = sem_model.qvar['eta'].var_params[0].detach().numpy()
-etaax.scatter(x = eta.numpy(), y = vbeta)
-etaax.set_xlabel("True Eta")
-etaax.set_ylabel("VB Eta")
-etaax.axline(xy1 = (0,0), slope = 1)
